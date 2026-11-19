@@ -1,0 +1,200 @@
+/* ========================================
+SIDEBAR - Styling konsisten di semua halaman
+Dengan logout yang selalu terlihat
+======================================== */
+
+/* --- 1. Container Utama Sidebar --- */
+/* Sidebar putih dengan border kanan, fixed di kiri */
+/* Tinggi disesuaikan: 100vh dikurangi tinggi TopBar (64px) */
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: white;
+  border-right: 1px solid #e0e6ed;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  flex-shrink: 0;
+  height: calc(100vh - 64px); /* ← PENTING: Kurangi tinggi TopBar */
+  overflow-y: auto; /* Scroll jika konten kepanjangan */
+  position: fixed;
+  top: 64px; /* Di bawah TopBar */
+  left: 0;
+  z-index: 100;
+}
+
+/* --- 2. Label "MENU" --- */
+.sidebar-menu-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #8a9a92;
+  font-weight: 600;
+  padding: 0 20px;
+  margin-bottom: 12px;
+}
+
+/* --- 3. Container Menu --- */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px;
+  flex: 1; /* Mengisi ruang yang tersedia */
+}
+
+/* --- 4. Item Menu --- */
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #4a5568;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+/* Efek hover pada menu */
+.sidebar-menu-item:hover {
+  background-color: #f0f4f8;
+  color: #1976d2;
+}
+
+/* Menu yang sedang aktif (halaman saat ini) */
+.sidebar-menu-item.active {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 600;
+}
+
+/* Ikon menu */
+.menu-icon {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  color: inherit;
+}
+
+/* --- 5. Footer Sidebar --- */
+/* Footer akan selalu di bawah karena margin-top: auto di parent */
+.sidebar-footer {
+  padding: 16px 12px;
+  margin-top: auto; /* ← PENTING: Dorong footer ke bawah */
+  border-top: 1px solid #e0e6ed;
+  background: transparent;
+  flex-shrink: 0; /* Footer tidak boleh mengecil */
+}
+
+/* --- 6. Info User di Sidebar --- */
+.sidebar-user-info {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e0e6ed;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Nama user */
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a2e3a;
+}
+
+/* Role user */
+.user-role {
+  font-size: 11px;
+  color: #8a9a92;
+  text-transform: capitalize;
+}
+
+/* --- 7. Tombol Logout --- */
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #dc3545;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+/* Efek hover pada tombol logout */
+.sidebar-logout:hover {
+  background-color: #fdecea;
+}
+
+/* Ikon logout */
+.logout-icon {
+  color: #dc3545;
+}
+
+.sidebar-logout span {
+  color: #dc3545;
+}
+
+/* --- 8. Scrollbar Custom untuk Sidebar --- */
+/* Agar scrollbar tidak mengganggu tampilan */
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+/* ========================================
+   TAMPILAN HP & TABLET (lebar layar <= 1024px)
+   Sidebar disembunyikan di luar layar sebelah kiri,
+   lalu meluncur masuk saat tombol ☰ di TopBar ditekan.
+   ======================================== */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);      /* sembunyi di kiri layar */
+    transition: transform 0.25s ease;  /* animasi meluncur */
+    box-shadow: none;
+    z-index: 950;                      /* di atas konten, di bawah TopBar */
+  }
+  .sidebar.terbuka {
+    transform: translateX(0);          /* tampil */
+    box-shadow: 8px 0 24px rgba(15, 23, 42, 0.18);
+  }
+  /* Lapisan gelap di belakang menu */
+  .sidebar-latar {
+    position: fixed;
+    inset: 64px 0 0 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 940;
+    animation: sidebarLatar 0.2s ease-out;
+  }
+}
+
+/* Di layar lebar, lapisan gelap tidak dipakai */
+@media (min-width: 1025px) {
+  .sidebar-latar {
+    display: none;
+  }
+}
+
+@keyframes sidebarLatar {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

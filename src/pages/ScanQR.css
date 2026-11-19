@@ -1,0 +1,340 @@
+/* ========================================
+FILE: ScanQR.css
+DESKRIPSI: Styling untuk halaman Scan QR Code petugas.
+======================================== */
+
+/* --- 1. Container Utama --- */
+.scan-qr-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: calc(100vh - 64px);
+}
+
+/* --- 2. Header --- */
+.scan-qr-header {
+  margin-bottom: 24px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #e0e6ed;
+  color: #5a6b7a;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+
+.btn-back:hover {
+  background: #f0f4f8;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.header-content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 8px 0;
+}
+
+.header-content p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0;
+}
+
+/* --- 3. Scanner Container --- */
+.scanner-container {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e0e6ed;
+}
+
+.scanner-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.scanner-icon {
+  color: #1976d2;
+}
+
+.scanner-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0;
+}
+
+/* Container untuk kamera dari Html5Qrcode */
+.qr-reader {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #e0e6ed;
+}
+
+/* Override style dari Html5Qrcode */
+.qr-reader video {
+  width: 100% !important;
+  border-radius: 12px;
+}
+
+.qr-reader img {
+  display: none;
+}
+
+.scanner-instruction {
+  text-align: center;
+  padding: 20px;
+  background: #f5f7fa;
+  border-radius: 12px;
+}
+
+.scanner-instruction p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0 0 8px 0;
+}
+
+.scanner-tip {
+  font-size: 12px;
+  color: #8a9a92;
+  font-style: italic;
+}
+
+/* --- 4. Verifying Container --- */
+.verifying-container {
+  background: white;
+  border-radius: 16px;
+  padding: 64px 32px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.verifying-spinner {
+  color: #1976d2;
+  animation: spin 1s linear infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.verifying-container h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 8px 0;
+}
+
+.verifying-container p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0;
+}
+
+/* --- 5. Success Container --- */
+.success-container {
+  background: white;
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.success-icon {
+  color: #4caf50;
+  margin-bottom: 24px;
+}
+
+.success-container h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 32px 0;
+}
+
+.verified-info {
+  background: #f5f7fa;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e6ed;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #5a6b7a;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #1a2e3a;
+  font-weight: 600;
+}
+
+.info-value.nomor {
+  font-size: 20px;
+  color: #1976d2;
+  font-weight: 700;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.dipanggil {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.success-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-scan-again,
+.btn-back-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-scan-again {
+  background: #1976d2;
+  color: white;
+}
+
+.btn-scan-again:hover {
+  background: #1565c0;
+}
+
+.btn-back-dashboard {
+  background: white;
+  color: #5a6b7a;
+  border: 1px solid #e0e6ed;
+}
+
+.btn-back-dashboard:hover {
+  background: #f5f7fa;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+/* --- 6. Error Container --- */
+.error-container {
+  background: white;
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.error-icon {
+  color: #ef5350;
+  margin-bottom: 24px;
+}
+
+.error-container h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 8px 0;
+}
+
+.error-message {
+  font-size: 14px;
+  color: #c62828;
+  margin: 0 0 32px 0;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #ef5350;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-retry:hover {
+  background: #c62828;
+}
+
+/* --- 7. Responsive --- */
+@media (max-width: 600px) {
+  .scan-qr-page {
+    padding: 16px;
+  }
+  
+  .scanner-container,
+  .success-container,
+  .error-container {
+    padding: 24px 16px;
+  }
+  
+  .success-actions,
+  .error-actions {
+    flex-direction: column;
+  }
+  
+  .btn-scan-again,
+  .btn-back-dashboard,
+  .btn-retry {
+    width: 100%;
+    justify-content: center;
+  }
+}

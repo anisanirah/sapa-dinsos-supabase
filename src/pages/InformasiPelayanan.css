@@ -1,0 +1,552 @@
+
+/* ========================================
+FILE: InformasiPelayanan.css
+DESKRIPSI: Styling khusus untuk halaman Informasi Pelayanan.
+Menggunakan kombinasi layout Grid dan Flexbox untuk responsivitas.
+======================================== */
+
+
+/* --- 1. Container Utama Halaman --- */
+/* Mengatur area utama halaman Informasi Pelayanan. */
+.informasi-page {
+  max-width: 1200px; /* Membatasi lebar maksimal agar tidak terlalu melebar di layar besar */
+  margin: 0 auto;    /* Menengahkan container secara horizontal */
+  padding: 2rem 1.5rem;
+  font-family: 'Inter', sans-serif; /* Menggunakan font modern */
+}
+
+
+/* --- 2. Bagian Header (Judul & Ilustrasi) --- */
+/* Mengatur tampilan bagian atas halaman yang berisi judul dan ilustrasi. */
+.informasi-header {
+  display: flex;
+  justify-content: space-between; /* Memberikan jarak antara teks dan ilustrasi */
+  align-items: center; /* Menyejajarkan konten secara vertikal */
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); /* Gradasi biru muda khas Dinsos */
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Mengatur ukuran dan tampilan judul utama halaman. */
+.header-content h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e3a8a; /* Biru tua */
+  margin-bottom: 0.5rem;
+}
+
+/* Mengatur tampilan nama instansi di bawah judul utama. */
+.header-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #3b82f6; /* Biru sedang */
+  margin-bottom: 1rem;
+}
+
+/* Mengatur deskripsi singkat informasi pelayanan. */
+.header-content p {
+  font-size: 1rem;
+  color: #4b5563; /* Abu-abu teks */
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+/* Mengatur tampilan lingkaran ilustrasi pada bagian header. */
+.illustration-icon {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+  color: #1e3a8a;
+}
+
+
+/* --- 3. Bagian Section & Grid Layanan --- */
+/* Mengatur jarak antarbagian pada halaman. */
+.section {
+  margin-bottom: 3rem;
+}
+
+/* Mengatur posisi ikon dan teks pada judul bagian jenis layanan. */
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem; /* Memberikan jarak antara ikon dan teks */
+  margin-bottom: 1.5rem;
+}
+
+/* Mengatur ukuran, ketebalan, dan warna judul section. */
+.section-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* Mengatur tampilan deskripsi di bawah judul section. */
+.section-header p {
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Menggunakan CSS Grid untuk menyusun kartu layanan secara otomatis. */
+.layanan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Responsif: otomatis menyesuaikan kolom */
+  gap: 1.5rem; /* Memberikan jarak antar kartu */
+}
+
+/* Mengatur tampilan dasar setiap kartu jenis layanan. */
+.layanan-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+/* Memberikan efek animasi ketika kursor diarahkan ke kartu layanan. */
+.layanan-card:hover {
+  transform: translateY(-4px); /* Efek naik sedikit saat di-hover */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Mengatur tampilan nama layanan pada setiap kartu. */
+.layanan-card h4 {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Mengatur warna khusus berdasarkan kategori kartu layanan. */
+.layanan-card.blue { border-top: 4px solid #3b82f6; }
+.layanan-card.blue svg { color: #3b82f6; }
+.layanan-card.purple { border-top: 4px solid #8b5cf6; }
+.layanan-card.purple svg { color: #8b5cf6; }
+
+
+/* --- 4. Grid Informasi (Persyaratan & Petunjuk) --- */
+/* Membagi area informasi menjadi dua kolom dengan ukuran yang sama. */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 kolom dengan lebar sama */
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Mengatur tampilan kartu informasi yang berisi persyaratan dan petunjuk. */
+.info-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Mengatur posisi ikon dan judul pada setiap kartu informasi. */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* Mengatur tampilan judul pada header kartu informasi. */
+.card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+
+/* --- 4.1 Styling Dropdown --- */
+/* Mengatur jarak antara dropdown dengan bagian informasi persyaratan. */
+.dropdown-container {
+  margin-bottom: 1.5rem;
+}
+
+/* Mengatur tampilan pilihan jenis layanan pada dropdown. */
+.layanan-dropdown {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1f2937;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+/* Memberikan perubahan warna border ketika dropdown mendapatkan fokus. */
+.layanan-dropdown:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: white;
+}
+
+
+/* --- 4.2 Styling List Persyaratan --- */
+/* Menghilangkan bullet bawaan agar daftar persyaratan dapat diatur menggunakan CSS sendiri. */
+.persyaratan-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Mengatur posisi ikon checklist dan teks setiap persyaratan. */
+.persyaratan-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+/* Menghilangkan garis bawah pada persyaratan terakhir. */
+.persyaratan-list li:last-child {
+  border-bottom: none;
+}
+
+/* Mengatur warna dan posisi ikon checklist. */
+.check-icon {
+  color: #10b981; /* Warna hijau untuk checklist */
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+
+/* --- 4.3 Styling List Petunjuk (Timeline sederhana) --- */
+/* Menggunakan Flexbox untuk menyusun tahapan pelayanan secara vertikal. */
+.petunjuk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Mengatur susunan nomor dan deskripsi setiap tahapan pelayanan. */
+.petunjuk-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+/* Membentuk nomor tahapan pelayanan menjadi lingkaran. */
+.petunjuk-number {
+  width: 32px;
+  height: 32px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* Mengatur tampilan judul setiap langkah pelayanan. */
+.petunjuk-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+}
+
+/* Mengatur tampilan deskripsi setiap langkah pelayanan. */
+.petunjuk-content p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+
+/* --- 5. Bagian Bawah (Operasional & CTA) --- */
+/* Membagi informasi operasional dan kartu ajakan mengambil antrean menjadi dua kolom. */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Menyusun daftar informasi operasional secara vertikal. */
+.operasional-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Mengatur tampilan setiap item informasi operasional. */
+.operasional-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+/* Mengatur warna dan ukuran ikon informasi operasional. */
+.operasional-item svg {
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+/* Mengatur tampilan label informasi seperti hari dan jam pelayanan. */
+.operasional-item .label {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+/* Mengatur tampilan nilai informasi seperti jadwal dan alamat kantor. */
+.operasional-item .value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+
+/* --- 5.1 Styling Kartu CTA (Call to Action) --- */
+/* Mengatur tampilan kartu ajakan untuk melakukan pengambilan nomor antrean. */
+.cta-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  border-radius: 12px;
+  padding: 2.5rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Membuat area ikon CTA berbentuk lingkaran. */
+.cta-icon {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+}
+
+/* Mengatur ukuran dan tampilan judul kartu CTA. */
+.cta-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+}
+
+/* Mengatur tampilan deskripsi pada kartu CTA. */
+.cta-card p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 0 0 2rem 0;
+  max-width: 300px;
+}
+
+/* Mengatur tampilan tombol pengambilan nomor antrean. */
+.cta-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  color: #1e3a8a;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Memberikan efek interaktif ketika kursor diarahkan ke tombol CTA. */
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+
+/* --- 6. Responsive Design (Media Queries) --- */
+/* Mengatur penyesuaian tampilan untuk perangkat tablet dengan lebar maksimal 900px. */
+@media (max-width: 900px) {
+  .info-grid,
+  .bottom-grid {
+    grid-template-columns: 1fr; /* Ubah jadi 1 kolom agar tidak sempit */
+  }
+  
+  /* Menyusun header secara vertikal pada layar tablet. */
+  .informasi-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  /* Menengahkan deskripsi header pada layar tablet. */
+  .header-content p {
+    margin: 0 auto;
+  }
+}
+
+/* Mengatur penyesuaian tampilan untuk perangkat HP dengan lebar maksimal 600px. */
+@media (max-width: 600px) {
+  .layanan-grid {
+    grid-template-columns: 1fr; /* 1 kolom penuh di HP */
+  }
+  
+  /* Mengurangi padding header agar sesuai dengan ukuran layar HP. */
+  .informasi-header {
+    padding: 1.5rem;
+  }
+  
+  /* Menyesuaikan ukuran judul utama pada layar HP. */
+  .header-content h1 {
+    font-size: 1.5rem;
+  }
+}
+
+
+/* ========================================
+   7. PENYESUAIAN TAMPILAN KARTU LAYANAN
+   Bagian tambahan untuk memperbaiki posisi ikon,
+   jarak judul, dan keseragaman warna seluruh kartu.
+   ======================================== */
+
+
+/* --- 7.1 Memperbaiki Posisi Header Jenis Layanan --- */
+/* Mengatur agar ikon Layers dan tulisan Jenis Layanan berdekatan dan sejajar. */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.875rem;
+}
+
+/* Mencegah ikon mengecil dan menghilangkan jarak tambahan di atasnya. */
+.section-header .section-icon {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* Mengatur area teks agar tidak terdorong terlalu jauh dari ikon. */
+.section-header > div {
+  flex: 0 1 auto;
+  margin-left: 0;
+}
+
+
+/* --- 7.2 Menyamakan Warna Seluruh Kartu Layanan --- */
+/* Memberikan latar belakang biru muda yang sama pada keempat kartu layanan. */
+.layanan-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #d4eaff;
+  border-radius: 12px;
+  min-height: 180px;
+  padding: 24px 16px;
+
+  /* Menggunakan Flexbox untuk menyusun ikon dan teks secara vertikal. */
+  display: flex;
+  flex-direction: column;
+
+  /* Menengahkan seluruh isi kartu secara horizontal dan vertikal. */
+  align-items: center;
+  justify-content: center;
+
+  /* Memastikan seluruh isi kartu berada di tengah. */
+  text-align: center;
+}
+
+
+/* --- 7.3 Memperbaiki Posisi Ikon pada Kartu Layanan --- */
+/* Membuat ikon berada tepat di tengah dan di atas nama layanan. */
+.layanan-card svg {
+  display: block;
+  margin: 0 auto 14px;
+  flex-shrink: 0;
+}
+
+
+/* --- 7.4 Menyamakan Warna Ikon pada Semua Kartu --- */
+/* Menggunakan warna biru agar ikon pada kartu keempat tidak berbeda sendiri. */
+.layanan-card.blue svg,
+.layanan-card.purple svg {
+  color: #1976d2;
+}
+
+
+/* --- 7.5 Menyamakan Border Seluruh Kartu --- */
+/* Menghilangkan perbedaan warna border antara kategori blue dan purple. */
+.layanan-card.blue,
+.layanan-card.purple {
+  border: 2px solid #d4eaff;
+}
+
+
+/* --- 7.6 Efek Hover Kartu Layanan --- */
+/* Memberikan perubahan warna yang sama ketika pengguna mengarahkan kursor ke kartu. */
+.layanan-card.blue:hover,
+.layanan-card.purple:hover {
+  background: #d1e8fc;
+  border-color: #1976d2;
+}
+
+
+/* --- 7.7 Mengatur Jarak dan Posisi Nama Layanan --- */
+/* Memastikan nama layanan berada tepat di bawah ikon dengan jarak yang konsisten. */
+.layanan-card h4 {
+  margin: 0;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+
+/* --- 7.8 Penyesuaian Kartu untuk Tablet --- */
+/* Menyesuaikan tinggi kartu agar tetap proporsional pada layar tablet. */
+@media (max-width: 900px) {
+  .layanan-card {
+    min-height: 170px;
+  }
+}
+
+
+/* --- 7.9 Penyesuaian Kartu untuk HP --- */
+/* Mengatur kembali posisi header dan ukuran kartu pada layar smartphone. */
+@media (max-width: 600px) {
+  .section-header {
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .layanan-card {
+    min-height: 150px;
+  }
+}
+
+/* ========================================
+   TAMPILAN HP: kartu jenis layanan 2 kolom & lebih ringkas
+   ======================================== */
+@media (max-width: 640px) {
+  .layanan-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .layanan-card {
+    padding: 16px 10px;
+  }
+}

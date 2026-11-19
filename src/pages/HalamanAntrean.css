@@ -1,0 +1,750 @@
+/* ========================================
+FILE: HalamanAntrean.css
+DESKRIPSI: Styling untuk halaman Antrean Saya
+Desain modern dengan warna biru DINSOS (#1976d2)
+======================================== */
+
+/* --- 1. Container Utama Halaman --- */
+/* Mengatur area utama halaman antrean */
+.antrean-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f8fafc;
+  min-height: calc(100vh - 64px);
+}
+
+/* --- 2. Header Halaman --- */
+/* Bagian atas halaman dengan judul dan ikon */
+.antrean-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: #1976d2;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 4px 0;
+}
+
+.header-content p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0;
+}
+
+/* --- 3. Loading State --- */
+/* Tampilan saat data sedang dimuat */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  gap: 16px;
+}
+
+.loading-spinner {
+  color: #1976d2;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #5a6b7a;
+  font-size: 14px;
+}
+
+/* --- 4. Error State --- */
+/* Tampilan jika terjadi error saat fetch data */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  gap: 16px;
+  text-align: center;
+}
+
+.error-icon {
+  color: #ef5350;
+}
+
+.error-message {
+  color: #c62828;
+  font-size: 14px;
+  margin: 0;
+}
+
+.btn-retry {
+  background: #ef5350;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-retry:hover {
+  background: #c62828;
+}
+
+/* --- 5. Empty State --- */
+/* Tampilan jika pengguna belum memiliki antrean */
+.empty-state {
+  background: white;
+  border-radius: 16px;
+  padding: 64px 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  background: #f0f4f8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #8a9a92;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0 0 24px 0;
+  max-width: 400px;
+}
+
+.btn-ambil-antrean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-ambil-antrean:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+}
+
+/* --- 6. Layout 2 Kolom --- */
+/* Membagi konten menjadi 2 kolom: kiri (kartu) dan kanan (info) */
+.antrean-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* --- 7. Kartu Antrean (Kiri) --- */
+/* Kartu besar yang menampilkan nomor antrean dan QR code */
+.antrean-kiri {
+  position: sticky;
+  top: 88px;
+  height: fit-content;
+}
+
+.kartu-antrean {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e3f2fd;
+}
+
+.kartu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e3f2fd;
+  margin-bottom: 24px;
+}
+
+.logo-dinsos img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.instansi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.instansi-info strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1976d2;
+  letter-spacing: 1px;
+}
+
+.instansi-info span {
+  font-size: 9px;
+  color: #5a6b7a;
+  letter-spacing: 0.5px;
+}
+
+/* Nomor Antrean Besar */
+.nomor-antrean-besar {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.nomor-antrean-besar .label {
+  display: block;
+  font-size: 13px;
+  color: #5a6b7a;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.nomor-antrean-besar .nomor {
+  display: block;
+  font-size: 64px;
+  font-weight: 800;
+  color: #1976d2;
+  line-height: 1;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.nomor-antrean-besar .layanan {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Kode Booking */
+.kode-booking {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #5a6b7a;
+}
+
+.kode-booking strong {
+  color: #1a2e3a;
+  font-family: monospace;
+}
+
+.btn-copy {
+  background: none;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.btn-copy:hover {
+  background: #e3f2fd;
+}
+
+/* QR Code Section */
+.qr-code-section {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 2px dashed #e3f2fd;
+}
+
+.qr-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  color: #1976d2;
+}
+
+.qr-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a2e3a;
+  margin-bottom: 4px;
+}
+
+.qr-desc {
+  font-size: 11px;
+  color: #5a6b7a;
+  line-height: 1.5;
+}
+
+/* --- 8. Informasi Status (Kanan) --- */
+/* Bagian kanan yang menampilkan status dan progress */
+.antrean-kanan {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Status Card */
+.status-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 2px solid #e3f2fd;
+}
+
+.status-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.status-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #5a6b7a;
+  margin: 0 0 4px 0;
+}
+
+.status-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1976d2;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.status-desc {
+  font-size: 12px;
+  color: #5a6b7a;
+  margin: 0;
+}
+
+/* Info Grid (3 Kolom) */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.info-box {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8f0fe;
+}
+
+.info-box .info-icon {
+  width: 36px;
+  height: 36px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info-box .info-label {
+  display: block;
+  font-size: 11px;
+  color: #5a6b7a;
+  margin-bottom: 2px;
+}
+
+.info-box .info-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a2e3a;
+}
+
+/* Progress Card */
+.progress-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8f0fe;
+}
+
+.progress-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 20px 0;
+}
+
+.progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  background: #e0e6ed;
+  color: #8a9a92;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  z-index: 2;
+}
+
+.step.completed .step-icon {
+  background: #1976d2;
+  color: white;
+}
+
+.step.active .step-icon {
+  background: #1976d2;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.step span {
+  font-size: 10px;
+  color: #5a6b7a;
+  text-align: center;
+  font-weight: 500;
+}
+
+.step.completed span,
+.step.active span {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+/* Animasi pulse untuk step yang aktif */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Petunjuk Card */
+.petunjuk-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e0e6ed;
+}
+
+.petunjuk-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.petunjuk-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0;
+}
+
+.petunjuk-header svg {
+  color: #1976d2;
+}
+
+.petunjuk-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.petunjuk-list li {
+  font-size: 12px;
+  color: #5a6b7a;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+/* --- 9. Riwayat Antrean --- */
+/* Bagian bawah untuk menampilkan history antrean */
+.riwayat-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8f0fe;
+}
+
+.riwayat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.riwayat-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.riwayat-title h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0;
+}
+
+.btn-lihat-semua {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-lihat-semua:hover {
+  background: #e3f2fd;
+}
+
+.riwayat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.riwayat-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e8f0fe;
+  transition: all 0.2s;
+}
+
+.riwayat-item:hover {
+  background: #f0f7ff;
+  border-color: #bbdefb;
+}
+
+.riwayat-nomor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.riwayat-nomor svg {
+  color: #1976d2;
+}
+
+.riwayat-nomor strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.riwayat-layanan {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a2e3a;
+}
+
+.riwayat-tanggal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #5a6b7a;
+}
+
+.riwayat-tanggal svg {
+  color: #8a9a92;
+}
+
+.riwayat-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.riwayat-status.status-selesai {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.riwayat-status.status-menunggu,
+.riwayat-status.status-dipanggil {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.riwayat-status.status-dibatalkan {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.riwayat-action {
+  background: none;
+  border: none;
+  color: #8a9a92;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.riwayat-action:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.riwayat-empty {
+  text-align: center;
+  padding: 32px;
+  color: #5a6b7a;
+  font-size: 14px;
+}
+
+/* --- 10. Responsive Design --- */
+/* Penyesuaian untuk tablet */
+@media (max-width: 1024px) {
+  .antrean-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .antrean-kiri {
+    position: static;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .progress-steps {
+    flex-wrap: wrap;
+  }
+  
+  .step {
+    flex: 0 0 calc(50% - 4px);
+  }
+}
+
+/* Penyesuaian untuk mobile */
+@media (max-width: 600px) {
+  .antrean-page {
+    padding: 16px;
+  }
+  
+  .antrean-header {
+    flex-direction: column;
+  }
+  
+  .nomor-antrean-besar .nomor {
+    font-size: 48px;
+  }
+  
+  .riwayat-item {
+    flex-wrap: wrap;
+  }
+  
+  .riwayat-nomor,
+  .riwayat-layanan {
+    width: 100%;
+  }
+  
+  .riwayat-tanggal,
+  .riwayat-status,
+  .riwayat-action {
+    margin-top: 8px;
+  }
+}

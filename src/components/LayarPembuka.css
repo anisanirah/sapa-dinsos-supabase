@@ -1,0 +1,204 @@
+/* FILE: src/components/LayarPembuka.css */
+/* DESKRIPSI: Tampilan dan animasi layar pembuka "SAPA DINSOS" */
+
+/* Latar layar penuh berwarna biru DINSOS, berada di atas semua tampilan */
+.pembuka {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  background: radial-gradient(circle at 30% 20%, #2196f3 0%, #1976d2 40%, #0d47a1 100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Saat menghilang: memudar dan sedikit membesar */
+.pembuka-hilang {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+/* Lingkaran hiasan transparan di latar */
+.pembuka-hiasan {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+.pembuka-hiasan-1 {
+  width: 520px;
+  height: 520px;
+  top: -180px;
+  right: -160px;
+}
+.pembuka-hiasan-2 {
+  width: 380px;
+  height: 380px;
+  bottom: -160px;
+  left: -120px;
+}
+
+/* Kolom isi di tengah */
+.pembuka-isi {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 560px;
+}
+
+/* Wadah logo + gelombang */
+.pembuka-logo-wadah {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin-bottom: 28px;
+}
+
+/* Lingkaran putih berisi logo, muncul dengan efek "memantul" */
+.pembuka-logo {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+  animation: pembukaLogo 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.pembuka-logo img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+/* Gelombang melingkar seperti "sapaan" yang menyebar */
+.pembuka-gelombang {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  animation: pembukaGelombang 1.8s ease-out 0.4s infinite;
+}
+.pembuka-gelombang-2 {
+  animation-delay: 1.3s;
+}
+
+/* Nama aplikasi */
+.pembuka-nama {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  line-height: 1.1;
+  animation: pembukaNaik 0.6s ease-out 0.35s both;
+}
+.pembuka-nama-aksen {
+  color: #ffe082;
+}
+
+/* Kepanjangan nama */
+.pembuka-kepanjangan {
+  margin: 12px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  animation: pembukaNaik 0.6s ease-out 0.5s both;
+}
+
+/* Nama instansi */
+.pembuka-instansi {
+  margin: 2px 0 0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  animation: pembukaNaik 0.6s ease-out 0.6s both;
+}
+
+/* Slogan dalam "pil" transparan */
+.pembuka-slogan {
+  margin: 22px 0 0;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 600;
+  animation: pembukaNaik 0.6s ease-out 0.8s both;
+}
+
+/* Garis pemuatan di bawah */
+.pembuka-muat {
+  width: 160px;
+  height: 4px;
+  margin-top: 32px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+.pembuka-muat span {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  background: #fff;
+  animation: pembukaMuat 2s ease-in-out both;
+}
+
+/* --- Animasi --- */
+@keyframes pembukaLogo {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pembukaGelombang {
+  from { opacity: 0.9; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.7); }
+}
+@keyframes pembukaNaik {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pembukaMuat {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Layar HP: ukuran huruf dan logo diperkecil */
+@media (max-width: 480px) {
+  .pembuka-logo-wadah {
+    width: 108px;
+    height: 108px;
+  }
+  .pembuka-nama {
+    font-size: 34px;
+    letter-spacing: 2px;
+  }
+  .pembuka-kepanjangan {
+    font-size: 14px;
+  }
+}
+
+/* Untuk pengguna yang mematikan animasi di perangkatnya */
+@media (prefers-reduced-motion: reduce) {
+  .pembuka *,
+  .pembuka {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Layar pembuka tidak ikut tercetak */
+@media print {
+  .pembuka {
+    display: none !important;
+  }
+}

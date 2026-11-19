@@ -1,0 +1,403 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f5f7fa;
+  color: #1a2e3a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* App Layout */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 64px);
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  background: #f5f7fa;
+}
+
+/* Loading Screen */
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e3f2fd;
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #5a6b7a;
+  font-size: 14px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ========================================
+LAYOUT APLIKASI
+======================================== */
+
+/* Container utama aplikasi */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Body aplikasi (Sidebar + Konten) */
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 64px);
+}
+
+/* Konten utama (di sebelah kanan Sidebar) */
+.app-content {
+  flex: 1;
+  margin-left: 240px; /* Sesuaikan dengan lebar Sidebar */
+  min-width: 0;
+  background: #f5f7fa;
+  padding-bottom: 80px; /* Tambah padding bawah agar konten tidak terpotong */
+}
+
+/* HP & tablet: sidebar disembunyikan, jadi konten memakai lebar penuh */
+@media (max-width: 1024px) {
+  .app-content {
+    margin-left: 0;
+  }
+}
+
+/* Cegah halaman bisa digeser ke samping di HP */
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* Loading Screen */
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Spinner loading */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e3f2fd;
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animasi putar untuk spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Teks loading */
+.loading-text {
+  color: #5a6b7a;
+  font-size: 14px;
+}
+/* Warna status "terverifikasi" (sudah scan barcode, menunggu diambil petugas pelayanan) */
+.status-terverifikasi,
+.riwayat-status.status-terverifikasi {
+  background: #e0f2f1;
+  color: #00695c;
+}
+
+/* ========================================
+   CETAK TIKET ANTREAN (pengunjung & petugas pendaftaran)
+   Saat mencetak / simpan PDF, HANYA elemen .area-cetak yang tampil.
+   ======================================== */
+
+/* Di layar: tiket cetak disembunyikan */
+.area-cetak {
+  display: none;
+}
+
+@media print {
+  /* Kertas A4 dengan margin 15 mm di setiap sisi */
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  /* Sembunyikan seluruh aplikasi; tiket dirender langsung di <body> (lihat TiketCetak.jsx) */
+  #root {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  /* Warna (biru, abu-abu) ikut tercetak */
+  .area-cetak,
+  .area-cetak * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Dokumen memenuhi lebar kertas */
+  .area-cetak {
+    display: block !important;
+    width: 100%;
+    page-break-inside: avoid; /* usahakan tetap 1 halaman */
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1a1a1a;
+    font-size: 10pt;
+  }
+
+  /* --- 1. Kop surat --- */
+  .cetak-kop {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+  }
+  .cetak-kop-logo {
+    width: 22mm;
+    height: 22mm;
+    object-fit: contain;
+  }
+  .cetak-kop-teks {
+    flex: 1;
+    text-align: center;
+    padding-right: 22mm; /* agar teks benar-benar di tengah (seimbang dengan lebar logo) */
+  }
+  .cetak-kop-pemda {
+    font-size: 13pt;
+    font-weight: 700;
+    letter-spacing: 0.5pt;
+  }
+  .cetak-kop-dinas {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #0d47a1;
+    letter-spacing: 1pt;
+  }
+  .cetak-kop-alamat {
+    font-size: 9pt;
+    color: #444;
+    margin-top: 1mm;
+  }
+  /* Garis ganda: tebal di atas, tipis di bawah */
+  .cetak-kop-garis {
+    border-top: 2.5pt solid #0d47a1;
+    border-bottom: 0.8pt solid #0d47a1;
+    height: 1.2mm;
+    margin: 3mm 0 5mm;
+  }
+
+  /* --- 2. Judul --- */
+  .cetak-judul {
+    text-align: center;
+    font-size: 15pt;
+    font-weight: 800;
+    letter-spacing: 1.5pt;
+    color: #0d47a1;
+  }
+  .cetak-subjudul {
+    text-align: center;
+    font-size: 9.5pt;
+    color: #555;
+    margin-bottom: 5mm;
+  }
+
+  /* --- 3. Nomor antrean + QR (dua kolom) --- */
+  .cetak-utama {
+    display: flex;
+    gap: 6mm;
+    align-items: stretch;
+  }
+  .cetak-nomor-kotak {
+    flex: 1;
+    border: 1pt solid #90caf9;
+    background: #e3f2fd !important;
+    border-radius: 4mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 6mm;
+  }
+  .cetak-label {
+    font-size: 10pt;
+    letter-spacing: 2pt;
+    color: #1565c0;
+    font-weight: 700;
+  }
+  .cetak-nomor {
+    font-size: 54pt;
+    font-weight: 900;
+    line-height: 1.05;
+    color: #0d47a1;
+  }
+  .cetak-layanan {
+    font-size: 13pt;
+    font-weight: 700;
+  }
+  .cetak-tanggal {
+    font-size: 10pt;
+    color: #555;
+    margin-top: 1mm;
+  }
+  .cetak-qr-kotak {
+    width: 60mm;
+    border: 1pt solid #ddd;
+    border-radius: 4mm;
+    padding: 4mm;
+    text-align: center;
+  }
+  .cetak-qr-kotak svg {
+    width: 46mm;
+    height: 46mm;
+  }
+  .cetak-kode {
+    font-family: 'Courier New', monospace;
+    font-size: 8pt;
+    color: #555;
+    word-break: break-all;
+    margin-top: 1mm;
+  }
+  .cetak-qr-ket {
+    font-size: 9pt;
+    font-weight: 700;
+    margin-top: 1mm;
+  }
+
+  /* --- 4 & 5. Judul bagian, tabel data, ketentuan --- */
+  .cetak-bagian {
+    margin: 4mm 0 1.5mm;
+    padding: 1.5mm 3mm;
+    background: #0d47a1 !important;
+    color: #fff !important;
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 1pt;
+    border-radius: 1.5mm;
+  }
+  .cetak-tabel {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .cetak-tabel td {
+    padding: 1.1mm 2mm;
+    border-bottom: 0.5pt solid #e0e0e0;
+    vertical-align: top;
+  }
+  .cetak-tabel-label {
+    width: 45mm;
+    color: #555;
+  }
+  /* Teks panjang (keperluan) dipotong setelah 3 baris dan diberi "..." */
+  .cetak-batas-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .cetak-tabel-titik {
+    width: 3mm;
+  }
+  .cetak-ketentuan {
+    list-style: decimal; /* Tailwind menghapus nomor list secara bawaan, jadi dipasang lagi */
+    margin: 0;
+    padding-left: 6mm;
+    font-size: 9pt;
+    line-height: 1.45;
+  }
+
+  /* --- 6. Catatan kaki --- */
+  .cetak-kaki {
+    margin-top: 5mm;
+    padding-top: 2mm;
+    border-top: 0.5pt dashed #999;
+    font-size: 8.5pt;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+/* ========================================
+   ANIMASI JENDELA KONFIRMASI (DialogProvider.jsx)
+   ======================================== */
+/* Latar gelap muncul perlahan */
+.dialog-latar {
+  animation: dialogLatar 0.15s ease-out;
+}
+/* Kartu muncul dari sedikit kecil ke ukuran normal */
+.dialog-kartu {
+  animation: dialogKartu 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+@keyframes dialogLatar {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dialogKartu {
+  from { opacity: 0; transform: scale(0.9) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

@@ -1,0 +1,237 @@
+/* ========================================
+FILE: TopBar.css
+DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
+======================================== */
+
+/* --- 1. Container Utama TopBar --- */
+/* TopBar berwarna biru solid, sticky di atas, dengan shadow */
+.topbar-global {
+  background-color: #1976d2;  /* Warna biru DINSOS */
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;  /* Sticky agar tetap di atas saat scroll */
+  top: 0;
+  z-index: 1000;  /* Z-index tinggi agar di atas elemen lain */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 64px;
+}
+
+/* --- 2. Bagian Kiri: Logo dan Brand --- */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Logo DINSOS */
+.topbar-logo {
+  height: 44px;
+  width: auto;
+}
+
+/* Container untuk nama instansi */
+.topbar-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Judul "DINSOS" */
+.topbar-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+/* Subtitle nama instansi */
+.topbar-subtitle {
+  font-size: 9px;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+}
+
+/* Tombol menu hamburger */
+.topbar-menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+/* --- 3. Bagian Tengah: Tanggal dan Jam --- */
+.topbar-center {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+}
+
+/* Container tanggal dengan ikon */
+.topbar-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Tampilan jam */
+.topbar-time {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* --- 4. Bagian Kanan: Profil User --- */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  position: relative;  /* Relative untuk positioning dropdown */
+}
+
+/* Tombol profil dengan background transparan */
+.topbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Efek hover pada tombol profil */
+.topbar-profile:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Ikon user bulat putih */
+.profile-icon {
+  width: 28px;
+  height: 28px;
+  background: white;
+  color: #1976d2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Ikon panah bawah */
+.profile-arrow {
+  font-size: 12px;
+}
+
+/* --- 5. Dropdown Profil --- */
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);  /* 8px di bawah tombol profil */
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  overflow: hidden;
+  z-index: 1001;  /* Di atas topbar */
+}
+
+/* Header dropdown dengan info user */
+.dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f4f8;
+  background: #f8fafc;
+}
+
+.dropdown-header .dropdown-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a2e3a;
+  margin: 0 0 4px 0;
+}
+
+.dropdown-header .dropdown-role {
+  font-size: 12px;
+  color: #5a6b7a;
+  margin: 0;
+}
+
+/* Tombol logout di dropdown */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: #dc3545;  /* Warna merah untuk logout */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Efek hover pada tombol logout */
+.dropdown-item:hover {
+  background: #fdecea;
+}
+
+.dropdown-item svg {
+  color: #dc3545;
+}
+
+/* --- 6. Responsive Design --- */
+/* Sembunyikan tanggal/jam di layar kecil (max-width: 900px) */
+@media (max-width: 900px) {
+  .topbar-center {
+    display: none;
+  }
+}
+
+/* Sembunyikan subtitle dan perkecil logo di HP (max-width: 600px) */
+@media (max-width: 600px) {
+  .topbar-subtitle {
+    display: none;
+  }
+  .topbar-logo {
+    height: 36px;
+  }
+}
+/* --- 7. Tombol menu ☰: hanya tampil di HP & tablet --- */
+@media (min-width: 1025px) {
+  .topbar-menu-btn {
+    display: none;
+  }
+}
+
+/* --- 8. HP kecil: TopBar lebih ringkas --- */
+@media (max-width: 600px) {
+  .topbar-global {
+    padding: 10px 12px;
+  }
+  .topbar-left {
+    gap: 8px;
+  }
+  /* Tombol menu dipindah ke paling kiri agar mudah dijangkau jempol */
+  .topbar-menu-btn {
+    order: -1;
+    margin-left: 0;
+  }
+  /* Tombol profil: hanya ikon + nama pendek */
+  .topbar-profile {
+    padding: 6px 10px;
+    max-width: 150px;
+  }
+  .topbar-profile > span:not(.profile-arrow) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<!--
+  FILE: index.html
+  DESKRIPSI: Halaman dasar aplikasi React.
+  lang="id"       -> memberi tahu browser bahwa isi halaman berbahasa Indonesia
+  translate="no"  -> mencegah Google Translate mengubah isi halaman.
+                     (Terjemahan otomatis mengganti teks diam-diam dan membuat React error / layar putih)
+-->
+<html lang="id" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Larang Google Chrome menawarkan / menjalankan terjemahan otomatis -->
+    <meta name="google" content="notranslate" />
+    <!-- Ikon tab browser: logo DINSOS -->
+    <link rel="icon" type="image/png" href="/images/logo-dinsos-qr.png" />
+    <!-- Tampilan menyesuaikan lebar layar (HP / tablet / komputer) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Warna bilah atas browser di HP (biru DINSOS) -->
+    <meta name="theme-color" content="#1976d2" />
+    <meta name="description" content="SAPA DINSOS - Sistem Antrean Pelayanan Dinas Sosial Kabupaten Majalengka. Sapa, Daftar, Dilayani." />
+    <!-- Judul tab browser -->
+    <title>SAPA DINSOS - Dinas Sosial Kabupaten Majalengka</title>
+  </head>
+  <body>
+    <!-- Tempat aplikasi React ditampilkan -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

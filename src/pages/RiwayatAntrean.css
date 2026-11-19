@@ -1,0 +1,546 @@
+/* ========================================
+FILE: RiwayatAntrean.css
+DESKRIPSI: Styling untuk halaman Riwayat Antrean
+Desain modern dengan warna biru DINSOS (#1976d2)
+======================================== */
+
+/* --- 1. Container Utama Halaman --- */
+/* Mengatur area utama halaman riwayat antrean */
+.riwayat-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f8fafc;
+  min-height: calc(100vh - 64px);
+}
+
+/* --- 2. Header Halaman --- */
+/* Bagian atas halaman dengan judul, deskripsi, dan tombol aksi */
+.riwayat-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8f0fe;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: #1976d2;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 4px 0;
+}
+
+.header-content p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0;
+}
+
+.btn-ambil-antrean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-ambil-antrean:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* --- 3. Filter Panel --- */
+/* Panel untuk memfilter berdasarkan status dan pencarian */
+.filter-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8f0fe;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5a6b7a;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-label svg {
+  color: #1976d2;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f5f7fa;
+  border: 1px solid #e0e6ed;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5a6b7a;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: #e3f2fd;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.filter-btn.active {
+  background: #1976d2;
+  border-color: #1976d2;
+  color: white;
+}
+
+.filter-count {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.filter-btn.active .filter-count {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* --- 4. Search Section --- */
+/* Bagian pencarian dengan input dan tombol reset */
+.search-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #8a9a92;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 40px;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1a2e3a;
+  background: #f5f7fa;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1976d2;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.search-input::placeholder {
+  color: #8a9a92;
+}
+
+.search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #8a9a92;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear:hover {
+  color: #dc3545;
+}
+
+.btn-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #f5f7fa;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5a6b7a;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-reset:hover {
+  background: #e3f2fd;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+/* --- 5. Result Info --- */
+/* Informasi jumlah hasil pencarian */
+.result-info {
+  padding: 12px 0;
+  font-size: 13px;
+  color: #5a6b7a;
+  font-weight: 500;
+}
+
+/* --- 6. Riwayat List --- */
+/* Daftar card riwayat antrean */
+.riwayat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.riwayat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e8f0fe;
+  transition: all 0.2s;
+}
+
+.riwayat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-color: #bbdefb;
+  transform: translateY(-2px);
+}
+
+.riwayat-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+}
+
+.riwayat-nomor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 12px 16px;
+  border-radius: 10px;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.riwayat-nomor svg {
+  flex-shrink: 0;
+}
+
+.riwayat-nomor strong {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.riwayat-detail {
+  flex: 1;
+}
+
+.riwayat-detail h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a2e3a;
+  margin: 0 0 8px 0;
+}
+
+.riwayat-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #5a6b7a;
+}
+
+.meta-item svg {
+  color: #8a9a92;
+}
+
+.riwayat-keterangan {
+  font-size: 12px;
+  color: #8a9a92;
+  margin: 0;
+  font-style: italic;
+}
+
+/* --- 7. Riwayat Action --- */
+/* Bagian kanan card: status badge dan tombol detail */
+.riwayat-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge svg {
+  flex-shrink: 0;
+}
+
+.status-menunggu {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.status-dipanggil {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-dilayani {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.status-selesai {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-dibatalkan {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.btn-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: white;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-detail:hover {
+  background: #1976d2;
+  color: white;
+}
+
+/* --- 8. Loading State --- */
+/* Tampilan saat data sedang dimuat */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e3f2fd;
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+/* Animasi berputar untuk loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #5a6b7a;
+  font-size: 14px;
+}
+
+/* --- 9. Empty State --- */
+/* Tampilan jika tidak ada riwayat yang sesuai */
+.empty-state {
+  background: white;
+  border-radius: 16px;
+  padding: 64px 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  background: #f0f4f8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #8a9a92;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a2e3a;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #5a6b7a;
+  margin: 0 0 24px 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- 10. Responsive Design --- */
+/* Penyesuaian untuk tablet (max-width: 900px) */
+@media (max-width: 900px) {
+  .riwayat-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .btn-ambil-antrean {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .riwayat-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .riwayat-action {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* Penyesuaian untuk mobile (max-width: 600px) */
+@media (max-width: 600px) {
+  .riwayat-page {
+    padding: 16px;
+  }
+  
+  .header-content h1 {
+    font-size: 22px;
+  }
+  
+  .filter-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    flex: 1;
+    min-width: calc(50% - 4px);
+    justify-content: center;
+  }
+  
+  .search-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .riwayat-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .riwayat-nomor {
+    width: 100%;
+  }
+  
+  .riwayat-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
