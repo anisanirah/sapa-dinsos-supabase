@@ -31,7 +31,7 @@ const PANDUAN = {
       ['Cetak / verifikasi tiket', 'Setelah daftar langsung, klik "Cetak Tiket" untuk memberikan tiket kepada pengunjung, lalu klik "Verifikasi Sekarang" (pengunjung sudah hadir di tempat).'],
       ['Barcode ditolak', 'Jika barcode tidak valid atau kedaluwarsa, minta pengunjung mendaftar ulang (online atau langsung).'],
       ['Membatalkan antrean', 'Antrean yang salah input atau pengunjungnya pulang sebelum dipanggil dapat dibatalkan dari tabel di Dashboard.'],
-      ['Rekap layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh Excel (CSV)" untuk laporan bulanan.'],
+      ['Rekap layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh PDF" untuk laporan resmi berkop surat (misalnya pilih "Bulan Ini" di akhir bulan).'],
     ],
   },
   // Panduan untuk petugas di 4 komputer pelayanan
@@ -44,7 +44,7 @@ const PANDUAN = {
       ['Mulai layani', 'Saat pengunjung tiba di loket, klik "Mulai Layani".'],
       ['Selesai', 'Setelah pelayanan selesai, klik "Selesai". Riwayat tercatat dan Anda bisa mengambil antrean berikutnya.'],
       ['Pengunjung tidak datang', 'Jika sudah dipanggil beberapa kali tetapi tidak datang, klik "Tidak Hadir" lalu ambil antrean berikutnya.'],
-      ['Rekap layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh Excel (CSV)" untuk laporan bulanan.'],
+      ['Rekap layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh PDF" untuk laporan resmi berkop surat (misalnya pilih "Bulan Ini" di akhir bulan).'],
     ],
   },
 }

@@ -10,6 +10,7 @@
 //   hijau          = selesai
 //   merah muda     = batal / tidak hadir (tidak dihitung dalam total)
 // Periode bisa dipilih: hari ini, bulan ini, bulan tertentu, atau rentang tanggal.
+// Tombol "Unduh PDF" membuat laporan resmi berkop surat (lihat lib/laporanPdf.js).
 // Data diambil dari fungsi Supabase "rekap_layanan" (lihat supabase/05_rekap_layanan.sql).
 // ========================================
 
@@ -17,7 +18,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 // Ikon-ikon dari lucide-react
 import {
-  Clock3, RefreshCw, CheckCircle2, XCircle, BarChart3, Download, Loader2, Layers, Sparkles,
+  Clock3, RefreshCw, CheckCircle2, XCircle, BarChart3, FileDown, Loader2, Layers, Sparkles,
 } from 'lucide-react'
 // Klien API (penerjemah ke Supabase, lihat lib/api.js)
 import api from '../lib/api'
@@ -25,6 +26,10 @@ import api from '../lib/api'
 import { pesanError } from '../lib/antrean'
 // Kotak pesan gagal yang dipakai bersama dashboard petugas
 import { PesanGagal } from './petugas/komponen'
+// Data petugas yang login (namanya dicantumkan di laporan PDF)
+import { useAuth } from '../context/AuthContext'
+// Pembuat laporan PDF (kop surat, ringkasan, tabel, grafik, tanda tangan)
+import { unduhLaporanPdf } from '../lib/laporanPdf'
 
 // Data diperbarui otomatis setiap 30 detik (cukup untuk rekap)
 const JEDA_REFRESH = 30000
@@ -146,32 +151,9 @@ function KartuRingkasan({ jenis, nilai }) {
   )
 }
 
-// Mengubah hasil rekap menjadi file CSV (bisa dibuka di Excel) lalu mengunduhnya
-function unduhCSV(rekap) {
-  // Baris judul kolom
-  const baris = [['Kode', 'Jenis Layanan', 'Total Permohonan', 'Menunggu', 'Diproses', 'Selesai', 'Dibatalkan', 'Online', 'Langsung']]
-  // Satu baris per jenis layanan
-  rekap.layanan.forEach((l) => {
-    baris.push([`#${l.kode}`, l.nama_layanan, l.total, l.menunggu, l.diproses, l.selesai, l.dibatalkan, l.online, l.langsung])
-  })
-  // Baris jumlah keseluruhan
-  const t = rekap.total
-  baris.push(['', 'JUMLAH', t.total, t.menunggu, t.diproses, t.selesai, t.dibatalkan, '', ''])
-  // Excel versi Indonesia memakai titik koma (;) sebagai pemisah kolom
-  const isi = baris
-    .map((b) => b.map((sel) => `"${String(sel).replace(/"/g, '""')}"`).join(';'))
-    .join('\r\n')
-  // Tanda BOM (kode FEFF) di awal file agar huruf terbaca benar di Excel
-  const berkas = new Blob(['﻿' + isi], { type: 'text/csv;charset=utf-8' })
-  const tautan = document.createElement('a')
-  tautan.href = URL.createObjectURL(berkas)
-  tautan.download = `rekap-layanan_${rekap.dari}_sd_${rekap.sampai}.csv`
-  tautan.click()
-  URL.revokeObjectURL(tautan.href)
-}
-
 // Komponen utama halaman Rekap Layanan
 export default function RekapLayanan() {
+  const { user } = useAuth()
   const hariIni = hariIniWIB()
   const bulanIni = hariIni.slice(0, 7)
 
@@ -186,6 +168,21 @@ export default function RekapLayanan() {
   const [memuat, setMemuat] = useState(true)
   const [diperbarui, setDiperbarui] = useState(null)
   const [galat, setGalat] = useState('')
+  // true saat file PDF sedang disiapkan (tombol dinonaktifkan sementara)
+  const [membuatPdf, setMembuatPdf] = useState(false)
+
+  // Membuat & mengunduh laporan PDF dari rekap yang sedang tampil
+  const unduhPdf = async () => {
+    if (!rekap) return
+    setMembuatPdf(true)
+    try {
+      await unduhLaporanPdf(rekap, periode, user?.profile?.nama || user?.name)
+    } catch {
+      setGalat('Gagal membuat file PDF. Silakan coba lagi.')
+    } finally {
+      setMembuatPdf(false)
+    }
+  }
 
   // Rentang tanggal yang dikirim ke Supabase sesuai pilihan periode
   const rentang = useMemo(() => {
@@ -305,19 +302,21 @@ export default function RekapLayanan() {
           </>
         )}
 
-        {/* Info pembaruan terakhir + tombol unduh hasil rekap (dibuka dengan Excel) */}
+        {/* Info pembaruan terakhir + tombol unduh laporan PDF */}
         <div className="ml-auto flex items-center gap-3">
           {diperbarui && (
             <span className="hidden text-xs text-gray-400 lg:inline">
               Diperbarui {diperbarui.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
           )}
+          {/* Unduh laporan PDF resmi (kop surat Dinas Sosial) untuk periode yang dipilih */}
           <button
-            onClick={() => rekap && unduhCSV(rekap)}
-            disabled={!rekap}
+            onClick={unduhPdf}
+            disabled={!rekap || membuatPdf}
             className="inline-flex items-center gap-2 rounded-xl bg-dinsos-700 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-dinsos-200 transition hover:bg-dinsos-800 disabled:opacity-50"
           >
-            <Download size={16} /> Unduh Excel
+            {membuatPdf ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
+            {membuatPdf ? 'Menyiapkan PDF...' : 'Unduh PDF'}
           </button>
         </div>
       </div>
