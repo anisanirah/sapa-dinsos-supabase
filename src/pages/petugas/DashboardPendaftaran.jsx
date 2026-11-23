@@ -252,18 +252,19 @@ export default function DashboardPendaftaran() {
             errors={errorKolom}
           />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Jenis Layanan *</label>
+            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Jenis Layanan *</label>
+            {/* Gaya kotak disamakan dengan kolom data tamu (sudut bulat + cahaya biru saat aktif) */}
             <select
               value={form.layanan_id}
               onChange={(e) => setForm({ ...form, layanan_id: e.target.value })}
-              className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:border-[#1976d2] outline-none bg-white"
+              className="w-full cursor-pointer rounded-xl border-2 border-gray-200 bg-white px-3 py-2.5 outline-none transition hover:border-blue-200 focus:border-[#1976d2] focus:ring-4 focus:ring-blue-100"
               required
             >
               <option value="">-- Pilih Layanan --</option>
               {layanans.map((l) => <option key={l.id} value={l.id}>{l.nama_layanan}</option>)}
             </select>
           </div>
-          <button type="submit" disabled={menyimpan} className="w-full py-3 rounded-lg bg-[#1976d2] hover:bg-[#1565c0] text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
+          <button type="submit" disabled={menyimpan} className="w-full py-3 rounded-xl bg-[#1976d2] hover:bg-[#1565c0] text-white font-semibold flex items-center justify-center gap-2 shadow-md shadow-blue-200 transition hover:-translate-y-0.5 disabled:opacity-50">
             {menyimpan ? <><Loader2 size={18} className="animate-spin" /> Menyimpan...</> : <><UserPlus size={18} /> Buat Nomor Antrean</>}
           </button>
         </form>
