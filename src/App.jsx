@@ -39,6 +39,8 @@ import KeamananPrivasi from './pages/KeamananPrivasi'
 import Notifikasi from './pages/Notifikasi'
 import Panduan from './pages/Panduan'
 import ScanQR from './pages/ScanQR'
+// Rekap jumlah permohonan per jenis layanan (permintaan Dinsos)
+import RekapLayanan from './pages/RekapLayanan'
 
 // Daftar role petugas
 const ROLE_PETUGAS = ['petugas_pendaftaran', 'petugas_pelayanan']
@@ -118,6 +120,8 @@ function AppRoutes() {
       <Route path="/petugas" element={<Halaman roles={ROLE_PETUGAS}><DashboardPetugas /></Halaman>} />
       {/* Scan barcode HANYA untuk petugas pendaftaran (sesuai alur) */}
       <Route path="/scan-qr" element={<Halaman roles={['petugas_pendaftaran']}><ScanQR /></Halaman>} />
+      {/* Rekap layanan untuk kedua jenis petugas */}
+      <Route path="/rekap-layanan" element={<Halaman roles={ROLE_PETUGAS}><RekapLayanan /></Halaman>} />
 
       {/* --- SEMUA ROLE YANG SUDAH LOGIN --- */}
       <Route path="/informasi" element={<Halaman><InformasiPelayanan /></Halaman>} />

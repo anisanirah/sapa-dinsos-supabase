@@ -26,14 +26,15 @@ const PANDUAN = {
   petugas_pendaftaran: {
     judul: 'Panduan untuk Petugas Pendaftaran',
     langkah: [
-      ['Pengunjung daftar online', 'Buka menu "Scan Barcode", lalu scan QR Code di HP pengunjung dengan kamera atau alat scanner. Jika valid, status menjadi "Terverifikasi" dan otomatis muncul di 3 komputer pelayanan.'],
+      ['Pengunjung daftar online', 'Buka menu "Scan Barcode", lalu scan QR Code di HP pengunjung dengan kamera atau alat scanner. Jika valid, status menjadi "Terverifikasi" dan otomatis muncul di 4 komputer pelayanan.'],
       ['Pengunjung datang langsung', 'Di Dashboard, isi form "Daftar Langsung" (nama, nomor HP bila ada, layanan). Sistem membuat nomor antrean + barcode.'],
       ['Cetak / verifikasi tiket', 'Setelah daftar langsung, klik "Cetak Tiket" untuk memberikan tiket kepada pengunjung, lalu klik "Verifikasi Sekarang" (pengunjung sudah hadir di tempat).'],
       ['Barcode ditolak', 'Jika barcode tidak valid atau kedaluwarsa, minta pengunjung mendaftar ulang (online atau langsung).'],
       ['Membatalkan antrean', 'Antrean yang salah input atau pengunjungnya pulang sebelum dipanggil dapat dibatalkan dari tabel di Dashboard.'],
+      ['Rekap layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh Excel (CSV)" untuk laporan bulanan.'],
     ],
   },
-  // Panduan untuk petugas di 3 komputer pelayanan
+  // Panduan untuk petugas di 4 komputer pelayanan
   petugas_pelayanan: {
     judul: 'Panduan untuk Petugas Pelayanan',
     langkah: [
@@ -42,6 +43,7 @@ const PANDUAN = {
       ['Mulai layani', 'Saat pengunjung tiba di loket, klik "Mulai Layani".'],
       ['Selesai', 'Setelah pelayanan selesai, klik "Selesai". Riwayat tercatat dan Anda bisa mengambil antrean berikutnya.'],
       ['Pengunjung tidak datang', 'Jika sudah dipanggil beberapa kali tetapi tidak datang, klik "Tidak Hadir" lalu ambil antrean berikutnya.'],
+      ['Rekap layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh Excel (CSV)" untuk laporan bulanan.'],
     ],
   },
 }

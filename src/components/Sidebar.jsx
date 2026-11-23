@@ -18,7 +18,8 @@ import {
   LogOut,           // Ikon untuk Logout
   QrCode,           // Ikon untuk Scan Barcode
   Settings,         // Ikon untuk Pengaturan Akun
-  HelpCircle        // Ikon untuk Panduan
+  HelpCircle,       // Ikon untuk Panduan
+  BarChart3         // Ikon untuk Rekap Layanan
 } from 'lucide-react'
 
 // 3. Import hook useState dan useEffect dari React
@@ -125,6 +126,12 @@ function Sidebar({ terbuka = false, onTutup = () => {} }) {
       label: 'Scan Barcode',
       icon: QrCode,
       roles: ['petugas_pendaftaran']  // Hanya petugas pendaftaran yang boleh scan
+    },
+    {
+      path: '/rekap-layanan',
+      label: 'Rekap Layanan',
+      icon: BarChart3,
+      roles: ['petugas_pendaftaran', 'petugas_pelayanan']  // Rekap permohonan per jenis layanan
     },
     {
       path: '/panduan',

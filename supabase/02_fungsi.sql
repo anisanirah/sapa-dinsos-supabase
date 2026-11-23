@@ -1073,7 +1073,7 @@ begin
     from public.antreans
    where tanggal = public._hari_ini();
 
-  -- Antrean yang sedang dipanggil/dilayani (bisa lebih dari satu karena 3 petugas)
+  -- Antrean yang sedang dipanggil/dilayani (bisa lebih dari satu karena ada 4 petugas pelayanan)
   select coalesce(jsonb_agg(public._antrean_json(a, false) order by a.waktu_dipanggil desc), '[]'::jsonb)
     into v_proses
     from public.antreans a

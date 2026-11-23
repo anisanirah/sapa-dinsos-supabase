@@ -2,7 +2,7 @@
 -- FILE: supabase/04_data_awal.sql
 -- DESKRIPSI: Data awal (pengganti DatabaseSeeder Laravel):
 --   1. 5 jenis layanan
---   2. Akun petugas: 1 petugas pendaftaran + 3 petugas pelayanan + 1 contoh pengunjung
+--   2. Akun petugas: 1 petugas pendaftaran + 4 petugas pelayanan (4 komputer loket) + 1 contoh pengunjung
 -- Aman dijalankan berulang kali (data tidak dobel, data lain tidak dihapus).
 --
 -- !!! PENTING SEBELUM MENJALANKAN !!!
@@ -63,6 +63,7 @@ begin
       ('Petugas Pelayanan 1', 'pelayanan1@dinsos.test',  'petugas_pelayanan',   null),
       ('Petugas Pelayanan 2', 'pelayanan2@dinsos.test',  'petugas_pelayanan',   null),
       ('Petugas Pelayanan 3', 'pelayanan3@dinsos.test',  'petugas_pelayanan',   null),
+      ('Petugas Pelayanan 4', 'pelayanan4@dinsos.test',  'petugas_pelayanan',   null),
       -- Akun contoh pengunjung (nomor HP contoh untuk uji login dengan nomor HP)
       ('Ani Sanirah',         'ani@dinsos.test',         'pengunjung',          '081234567890')
     ) as t(nama, email, role, no_telp)
@@ -111,6 +112,6 @@ begin
           is_active = true;
   end loop;
 
-  raise notice 'Selesai: 5 layanan dan 5 akun siap dipakai.';
+  raise notice 'Selesai: 5 layanan dan 6 akun siap dipakai.';
 end;
 $$;

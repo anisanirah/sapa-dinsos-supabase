@@ -1,6 +1,6 @@
 // ========================================
 // FILE: petugas/DashboardPelayanan.jsx
-// DESKRIPSI: Dashboard PETUGAS PELAYANAN (3 komputer loket).
+// DESKRIPSI: Dashboard PETUGAS PELAYANAN (4 komputer loket).
 // Sesuai alur:
 //  - Daftar antrean TERVERIFIKASI tampil dengan format "A001 - Siti Nurhaliza"
 //  - Klik "Ambil"        : TERVERIFIKASI -> DIPANGGIL (petugas memanggil secara lisan)

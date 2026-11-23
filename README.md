@@ -27,7 +27,9 @@ Versi utama untuk laporan & sidang KP tetap versi **Laravel**.
   1. `01_skema.sql` — tabel `profiles`, `layanans`, `antreans`
   2. `02_fungsi.sql` — semua logika (nomor antrean, barcode, transisi status atomik, dll.)
   3. `03_keamanan.sql` — Row Level Security & hak akses
-  4. `04_data_awal.sql` — 5 layanan + akun petugas (**ganti kata sandi dulu di dalam file**)
+  4. `04_data_awal.sql` — 5 layanan + akun petugas (1 pendaftaran, 4 pelayanan) (**ganti kata sandi dulu di dalam file**)
+  5. `05_rekap_layanan.sql` — kode/tag layanan, layanan DTSEN & PBI, fungsi `rekap_layanan` untuk halaman **Rekap Layanan**
+  6. `06_akun_pelayanan4.sql` — *hanya untuk proyek lama*: menambah akun petugas pelayanan ke-4 (**ganti kata sandi dulu**)
   - `template-email/` — isi email verifikasi & atur ulang kata sandi (bahasa Indonesia)
 - `vercel.json` — agar alamat seperti `/verifikasi-email` tidak "404" di Vercel
 - `.env.example` — contoh pengaturan (salin menjadi `.env`)

@@ -138,6 +138,9 @@ export function kataSandiValid(password = '') {
   return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password)
 }
 
+// Pengingat folder Spam: email dari aplikasi kadang dianggap Gmail sebagai Spam/Promosi
+export const PENGINGAT_SPAM = 'Jika tidak ada di Kotak Masuk, periksa folder Spam atau Promosi.'
+
 // Pesan jika kata sandi belum memenuhi syarat
 const PESAN_SYARAT = 'Kata sandi belum memenuhi persyaratan (huruf besar, huruf kecil, angka, minimal 8 karakter).'
 
@@ -150,7 +153,7 @@ export function galatDariAuth(error, cadangan = 'Terjadi kesalahan. Silakan coba
   // Terlalu sering (login / kirim email)
   if (error?.status === 429 || kode.startsWith('over_')) {
     if (kode === 'over_email_send_rate_limit') {
-      return buatGalat(429, 'Batas pengiriman email sedang tercapai. Tunggu beberapa menit lalu coba lagi.', 'terlalu_banyak_percobaan')
+      return buatGalat(429, `Email baru saja dikirim, jadi tunggu sekitar 1 menit sebelum mengirim ulang. ${PENGINGAT_SPAM}`, 'terlalu_banyak_percobaan')
     }
     return buatGalat(429, 'Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi.', 'terlalu_banyak_percobaan')
   }
@@ -184,7 +187,7 @@ export async function kirimUlangVerifikasi(email) {
     options: { emailRedirectTo: `${asal()}/verifikasi-email` },
   })
   if (error) throw galatDariAuth(error, 'Email verifikasi gagal dikirim. Pastikan layanan email aktif, lalu coba lagi.')
-  return { message: 'Email verifikasi telah dikirim ulang. Silakan periksa kotak masuk Anda.' }
+  return { message: `Email verifikasi telah dikirim ulang. Silakan periksa kotak masuk Anda. ${PENGINGAT_SPAM}` }
 }
 
 // ----------------------------------------
@@ -240,7 +243,7 @@ async function lupaKataSandi(body) {
     throw galatDariAuth(error, 'Email gagal dikirim. Pastikan layanan email aktif, lalu coba lagi.')
   }
   // Jawaban SELALU sama (terdaftar atau tidak) agar email orang lain tidak bisa ditebak
-  return { data: { message: 'Jika email tersebut terdaftar, tautan untuk mengatur ulang kata sandi telah dikirim. Periksa kotak masuk Anda.' } }
+  return { data: { message: `Jika email tersebut terdaftar, tautan untuk mengatur ulang kata sandi telah dikirim. Periksa kotak masuk Anda. ${PENGINGAT_SPAM}` } }
 }
 
 // POST /reset-password -> simpan kata sandi baru memakai kode (token_hash) dari email
@@ -329,6 +332,8 @@ const RUTE = [
   // --- KEDUA PETUGAS ---
   ['GET',  /^\/antreans\/today$/,               () => rpc('antrean_hari_ini')],
   ['GET',  /^\/dashboard\/stats$/,              () => rpc('statistik_dashboard')],
+  // Rekap jumlah permohonan per jenis layanan: /rekap-layanan/2026-11-01/2026-11-30
+  ['GET',  /^\/rekap-layanan\/(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/, (m) => rpc('rekap_layanan', { p_dari: m[1], p_sampai: m[2] })],
   ['GET',  /^\/antreans\/(\d+)$/,               (m) => rpc('detail_antrean', { p_id: Number(m[1]) })],
 ]
 
