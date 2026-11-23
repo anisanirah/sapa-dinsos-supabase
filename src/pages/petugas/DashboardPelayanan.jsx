@@ -3,17 +3,18 @@
 // DESKRIPSI: Dashboard PETUGAS PELAYANAN (4 komputer loket).
 // Sesuai alur:
 //  - Daftar antrean TERVERIFIKASI tampil dengan format "A001 - Siti Nurhaliza"
-//  - Klik "Ambil"        : TERVERIFIKASI -> DIPANGGIL (petugas memanggil secara lisan)
+//  - Klik "Ambil"        : TERVERIFIKASI -> DIPANGGIL (komputer loket mengumumkan panggilan lewat speaker)
+//  - Klik "Panggil Ulang": mengulang pengumuman suara (status tidak berubah)
 //  - Klik "Mulai Layani" : DIPANGGIL     -> DILAYANI
 //  - Klik "Selesai"      : DILAYANI      -> SELESAI
 //  - Klik "Tidak Hadir"  : DIPANGGIL     -> DIBATALKAN (pengunjung tidak datang)
 // Satu petugas hanya memegang SATU antrean. Data diperbarui otomatis setiap 5 detik.
 // ========================================
 // useState = simpan data; useCallback = simpan fungsi; useRef = simpan nilai tanpa render ulang
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import {
   // Ikon-ikon dari lucide-react
-  Megaphone, Play, CheckCircle2, UserX, Hand, ListOrdered, Loader2, Volume2, VolumeX, Users,
+  Megaphone, Play, CheckCircle2, UserX, Hand, ListOrdered, Loader2, Volume2, VolumeX, Users, Repeat, AlertTriangle,
 } from 'lucide-react'
 // Klien API (penerjemah ke Supabase, lihat lib/api.js)
 import api from '../../lib/api'
@@ -29,6 +30,8 @@ import { useDialog } from '../../components/DialogProvider'
 import { BannerSapaan, StatCard, BadgeStatus, BadgeJenis, PesanGagal, usePolling, bunyiTing } from './komponen'
 // Gaya tampilan dashboard petugas
 import '../DashboardPetugas.css'
+// Suara pemanggilan antrean (ding-dong + dibacakan dalam bahasa Indonesia)
+import { umumkanPanggilan, ambilNomorLoket, simpanNomorLoket, adaSuaraIndonesia } from '../../lib/suara'
 
 // Data diperbarui otomatis setiap 5 detik
 const REFRESH_INTERVAL = 5000
@@ -55,6 +58,20 @@ export default function DashboardPelayanan() {
   // Bunyi saat ada antrean baru (bisa dimatikan)
   const [suaraAktif, setSuaraAktif] = useState(() => localStorage.getItem('suaraPelayanan') !== 'mati')
   const jumlahSebelumnya = useRef(null)
+  // Nomor loket komputer ini (dipakai dalam kalimat panggilan), bisa diubah petugas
+  const [loket, setLoket] = useState(() => ambilNomorLoket(user?.profile?.nama))
+  // false = komputer ini tidak punya suara berbahasa Indonesia (tampilkan peringatan)
+  const [suaraIndonesia, setSuaraIndonesia] = useState(true)
+
+  // Saat data akun baru termuat, isi nomor loket dari nama akun (misal "Petugas Pelayanan 2" -> 2)
+  useEffect(() => {
+    if (!loket) setLoket(ambilNomorLoket(user?.profile?.nama))
+  }, [user, loket])
+
+  // Periksa sekali apakah browser memiliki suara berbahasa Indonesia
+  useEffect(() => {
+    adaSuaraIndonesia().then(setSuaraIndonesia)
+  }, [])
 
   // Ambil 3 data sekaligus: antrean milik saya, daftar terverifikasi, dan statistik
   const fetchData = useCallback(async () => {
@@ -88,22 +105,49 @@ export default function DashboardPelayanan() {
 
   // Menjalankan aksi tombol (Ambil / Mulai / Selesai / Tidak Hadir)
   // Fungsi umum untuk semua tombol: kirim PUT /api/antreans/{id}/{jalur}
+  // Mengembalikan true jika berhasil
   const aksi = async (antrean, jalur, pesanGagal) => {
     setSedangKlik(antrean.id)
     try {
       const res = await api.put(`/antreans/${antrean.id}/${jalur}`)
       toast.success(res.data.message)
+      return true
     } catch (err) {
       // 409 = sudah diambil petugas lain / status berubah -> cukup muat ulang daftar
       toast.error(pesanError(err, pesanGagal))
+      return false
     } finally {
       setSedangKlik(null)
       fetchData()
     }
   }
 
-  // "Ambil": TERVERIFIKASI -> DIPANGGIL
-  const ambil = (a) => aksi(a, 'call', 'Gagal mengambil antrean.')
+  // Umumkan panggilan lewat speaker komputer ini (jika suara dinyalakan)
+  const panggilDenganSuara = (a) => {
+    if (!suaraAktif) return
+    umumkanPanggilan({ nomor: a.nomor_antrean, nama: a.nama_tampil, loket })
+  }
+
+  // "Ambil": TERVERIFIKASI -> DIPANGGIL, lalu langsung diumumkan
+  const ambil = async (a) => {
+    const berhasil = await aksi(a, 'call', 'Gagal mengambil antrean.')
+    if (berhasil) panggilDenganSuara(a)
+  }
+
+  // "Panggil Ulang": umumkan lagi tanpa mengubah status (pengunjung belum datang ke loket)
+  const panggilUlang = (a) => {
+    if (!suaraAktif) {
+      toast.error('Suara sedang mati. Nyalakan tombol "Suara" di kanan atas terlebih dahulu.')
+      return
+    }
+    panggilDenganSuara(a)
+  }
+
+  // Simpan pilihan nomor loket di browser komputer ini
+  const ubahLoket = (nilai) => {
+    setLoket(nilai)
+    simpanNomorLoket(nilai)
+  }
   // "Mulai Layani": DIPANGGIL -> DILAYANI
   const mulai = (a) => aksi(a, 'mulai', 'Gagal memulai pelayanan.')
   // "Selesai": DILAYANI -> SELESAI
@@ -122,7 +166,7 @@ export default function DashboardPelayanan() {
     aksi(a, 'tidak-hadir', 'Gagal menandai tidak hadir.')
   }
 
-  // Nyalakan / matikan bunyi "ting" (pilihan disimpan di browser)
+  // Nyalakan / matikan suara: bunyi "ting" antrean baru + pengumuman panggilan (pilihan disimpan di browser)
   const ubahSuara = () => {
     const baru = !suaraAktif
     setSuaraAktif(baru)
@@ -148,16 +192,42 @@ export default function DashboardPelayanan() {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Dashboard Pelayanan</h1>
-          <p className="text-gray-500 text-sm mt-1">Ambil antrean yang sudah terverifikasi, panggil secara lisan, lalu layani sampai selesai.</p>
+          <p className="text-gray-500 text-sm mt-1">Ambil antrean yang sudah terverifikasi, sistem akan memanggil lewat speaker, lalu layani sampai selesai.</p>
         </div>
-        <button
-          onClick={ubahSuara}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50"
-          title="Bunyi saat ada antrean baru"
-        >
-          {suaraAktif ? <Volume2 size={16} /> : <VolumeX size={16} />} Suara {suaraAktif ? 'Nyala' : 'Mati'}
-        </button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {/* Pilihan nomor loket komputer ini (dibacakan saat memanggil) */}
+          <label className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 bg-white">
+            Loket
+            <select
+              value={loket}
+              onChange={(e) => ubahLoket(e.target.value)}
+              className="bg-transparent font-semibold text-[#1976d2] focus:outline-none"
+            >
+              <option value="">-</option>
+              {[1, 2, 3, 4].map((n) => <option key={n} value={String(n)}>{n}</option>)}
+            </select>
+          </label>
+          {/* Nyalakan/matikan suara (bunyi antrean baru + pengumuman panggilan) */}
+          <button
+            onClick={ubahSuara}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm hover:bg-gray-50 ${suaraAktif ? 'border-[#1976d2] text-[#1976d2] bg-blue-50' : 'border-gray-300 text-gray-600'}`}
+            title="Suara panggilan & bunyi antrean baru"
+          >
+            {suaraAktif ? <Volume2 size={16} /> : <VolumeX size={16} />} Suara {suaraAktif ? 'Nyala' : 'Mati'}
+          </button>
+        </div>
       </div>
+
+      {/* Peringatan jika komputer belum punya suara bahasa Indonesia */}
+      {suaraAktif && !suaraIndonesia && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-3 text-sm text-amber-800">
+          <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+          <span>
+            Browser di komputer ini belum memiliki suara berbahasa Indonesia, jadi pengumuman bisa terdengar berlogat asing.
+            Gunakan Google Chrome atau Microsoft Edge versi terbaru dan pastikan komputer terhubung ke internet.
+          </span>
+        </div>
+      )}
 
       <PesanGagal pesan={errorMessage} onCobaLagi={fetchData} />
 
@@ -202,10 +272,18 @@ export default function DashboardPelayanan() {
                   <>
                     <div className="mt-4 bg-white border border-yellow-200 rounded-lg p-3 text-sm text-gray-700">
                       <Hand size={16} className="inline mr-1 text-yellow-600" />
-                      Panggil secara lisan: <em>&quot;Nomor antrean <strong>{milikSaya.nomor_antrean}</strong>, atas nama{' '}
-                      <strong>{milikSaya.nama_tampil}</strong>, silakan menuju loket {user?.profile?.nama}.&quot;</em>
+                      {suaraAktif ? 'Diumumkan lewat speaker: ' : 'Panggil secara lisan: '}
+                      <em>&quot;Nomor antrean <strong>{milikSaya.nomor_antrean}</strong>, atas nama <strong>{milikSaya.nama_tampil}</strong>,
+                      silakan menuju loket {loket || 'pelayanan'}.&quot;</em>
                       <div className="text-xs text-gray-500 mt-1">Dipanggil pukul {formatJam(milikSaya.waktu_dipanggil)}</div>
                     </div>
+                    {/* Ulangi pengumuman jika pengunjung belum datang ke loket */}
+                    <button
+                      onClick={() => panggilUlang(milikSaya)}
+                      className="w-full mt-3 py-3 rounded-lg border-2 border-[#1976d2] text-[#1976d2] font-semibold hover:bg-blue-50 inline-flex items-center justify-center gap-2"
+                    >
+                      <Repeat size={18} /> Panggil Ulang
+                    </button>
                     <div className="grid grid-cols-2 gap-2 mt-4">
                       <button
                         onClick={() => tidakHadir(milikSaya)}

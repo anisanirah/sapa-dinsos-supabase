@@ -39,7 +39,8 @@ const PANDUAN = {
     judul: 'Panduan untuk Petugas Pelayanan',
     langkah: [
       ['Lihat daftar antrean', 'Dashboard menampilkan antrean yang sudah TERVERIFIKASI (format: A001 - Nama). Daftar diperbarui otomatis setiap beberapa detik.'],
-      ['Ambil antrean', 'Klik "Ambil" pada antrean paling atas. Status menjadi "Dipanggil". Panggil nomor dan nama pengunjung secara lisan. Satu petugas hanya memegang satu antrean.'],
+      ['Ambil antrean', 'Klik "Ambil" pada antrean paling atas. Status menjadi "Dipanggil" dan komputer mengumumkan nomor, nama, serta nomor loket lewat speaker. Satu petugas hanya memegang satu antrean.'],
+      ['Panggil ulang & nomor loket', 'Jika pengunjung belum datang, klik "Panggil Ulang". Pastikan pilihan "Loket" di kanan atas sesuai nomor loket komputer ini dan tombol "Suara" dalam keadaan Nyala.'],
       ['Mulai layani', 'Saat pengunjung tiba di loket, klik "Mulai Layani".'],
       ['Selesai', 'Setelah pelayanan selesai, klik "Selesai". Riwayat tercatat dan Anda bisa mengambil antrean berikutnya.'],
       ['Pengunjung tidak datang', 'Jika sudah dipanggil beberapa kali tetapi tidak datang, klik "Tidak Hadir" lalu ambil antrean berikutnya.'],
