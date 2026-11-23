@@ -127,10 +127,13 @@ LAYOUT APLIKASI
   }
 }
 
-/* Cegah halaman bisa digeser ke samping di HP */
+/* Cegah halaman bisa digeser ke samping di HP.
+   "clip" dipakai (bukan "hidden") agar TopBar yang "sticky" tetap menempel di atas saat di-scroll.
+   Baris "hidden" tetap ada sebagai cadangan untuk browser lama yang belum mengenal "clip". */
 html,
 body {
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Loading Screen */
