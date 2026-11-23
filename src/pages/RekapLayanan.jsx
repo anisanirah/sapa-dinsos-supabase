@@ -1,11 +1,14 @@
 // ========================================
 // FILE: RekapLayanan.jsx
 // DESKRIPSI: Halaman REKAP LAYANAN untuk petugas (permintaan Dinas Sosial).
-// Meniru dasbor "Laporan Hastag": setiap jenis layanan tampil sebagai kotak berisi
-// jumlah permohonan, kode/tag (misal #DTSEN), dan rincian status:
-//   ikon jam (merah)    = menunggu (belum dipanggil)
-//   ikon putar (oranye) = sedang diproses (dipanggil/dilayani)
-//   ikon centang (hijau)= selesai
+// Meniru dasbor "Laporan Hastag": setiap jenis layanan tampil sebagai kartu berisi
+// jumlah permohonan, kode/tag (misal #DTSEN), dan rincian status.
+// Warna mengikuti tema SAPA DINSOS (biru dinsos) dan warna status yang sama dengan
+// badge status di halaman lain:
+//   kuning (amber) = menunggu (belum dipanggil)
+//   ungu (violet)  = sedang diproses (dipanggil/dilayani)
+//   hijau          = selesai
+//   merah muda     = batal / tidak hadir (tidak dihitung dalam total)
 // Periode bisa dipilih: hari ini, bulan ini, bulan tertentu, atau rentang tanggal.
 // Data diambil dari fungsi Supabase "rekap_layanan" (lihat supabase/05_rekap_layanan.sql).
 // ========================================
@@ -14,7 +17,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 // Ikon-ikon dari lucide-react
 import {
-  Clock3, RefreshCw, CheckCircle2, XCircle, BarChart3, Download, Loader2, Tag,
+  Clock3, RefreshCw, CheckCircle2, XCircle, BarChart3, Download, Loader2, Layers, Sparkles,
 } from 'lucide-react'
 // Klien API (penerjemah ke Supabase, lihat lib/api.js)
 import api from '../lib/api'
@@ -25,6 +28,14 @@ import { PesanGagal } from './petugas/komponen'
 
 // Data diperbarui otomatis setiap 30 detik (cukup untuk rekap)
 const JEDA_REFRESH = 30000
+
+// Warna setiap kelompok status (dipakai di semua bagian halaman agar seragam)
+const WARNA = {
+  menunggu: { teks: 'text-amber-600', latar: 'bg-amber-50', batang: 'bg-amber-400', ikon: Clock3, label: 'Menunggu' },
+  diproses: { teks: 'text-violet-600', latar: 'bg-violet-50', batang: 'bg-violet-400', ikon: RefreshCw, label: 'Diproses' },
+  selesai: { teks: 'text-emerald-600', latar: 'bg-emerald-50', batang: 'bg-emerald-500', ikon: CheckCircle2, label: 'Selesai' },
+  dibatalkan: { teks: 'text-rose-500', latar: 'bg-rose-50', batang: 'bg-rose-300', ikon: XCircle, label: 'Batal' },
+}
 
 // Tanggal hari ini menurut jam WIB, format "YYYY-MM-DD"
 function hariIniWIB() {
@@ -55,47 +66,82 @@ const PILIHAN_PERIODE = [
   { kunci: 'rentang', label: 'Rentang Tanggal' },
 ]
 
-// Satu angka kecil berikon (bagian bawah kotak layanan)
-function AngkaStatus({ ikon: Ikon, warna, nilai, judul }) {
+// Gaya kotak isian tanggal/bulan
+const KELAS_INPUT = 'mt-1 rounded-xl border border-dinsos-100 bg-dinsos-50/50 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-dinsos-300'
+
+// Chip kecil berwarna untuk satu status (dipakai di kartu layanan)
+function ChipStatus({ jenis, nilai }) {
+  const w = WARNA[jenis]
+  const Ikon = w.ikon
   return (
-    <span className={`inline-flex items-center gap-1 ${warna}`} title={judul}>
-      <Ikon size={16} strokeWidth={2.5} />
-      <span className="font-semibold">{nilai}</span>
+    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${w.latar} ${w.teks}`} title={w.label}>
+      <Ikon size={13} strokeWidth={2.5} />
+      {nilai}
     </span>
   )
 }
 
-// Kotak satu jenis layanan (meniru kartu di dasbor contoh)
-function KotakLayanan({ data }) {
+// Batang kemajuan bertumpuk: porsi menunggu, diproses, dan selesai dari total
+function BatangKemajuan({ data }) {
+  // Tidak ada permohonan: tampilkan batang abu-abu kosong
+  if (!data.total) return <div className="h-2 rounded-full bg-gray-100" />
+  const bagian = ['selesai', 'diproses', 'menunggu']
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-      {/* Bagian atas: angka besar + tag layanan */}
-      <div className="px-4 pt-3 pb-3 flex-1">
-        <div className="text-4xl font-light text-indigo-900 leading-tight">{data.total}</div>
-        <span className="inline-block mt-1 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sky-700 border border-sky-300 rounded">
+    <div className="flex h-2 overflow-hidden rounded-full bg-gray-100">
+      {bagian.map((k) => data[k] > 0 && (
+        <div key={k} className={WARNA[k].batang} style={{ width: `${(data[k] / data.total) * 100}%` }} />
+      ))}
+    </div>
+  )
+}
+
+// Kartu satu jenis layanan (meniru kotak di dasbor contoh, dengan gaya SAPA DINSOS)
+function KartuLayanan({ data }) {
+  // Persentase permohonan yang sudah selesai
+  const persen = data.total ? Math.round((data.selesai / data.total) * 100) : 0
+  return (
+    <div className="group flex flex-col gap-3 rounded-2xl border border-dinsos-50 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-dinsos-200 hover:shadow-lg hover:shadow-dinsos-100">
+      {/* Baris atas: tag layanan + persen selesai */}
+      <div className="flex items-center justify-between gap-2">
+        <span className="rounded-full bg-dinsos-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-dinsos-700">
           #{data.kode}
         </span>
-        <div className="mt-1 text-xs text-gray-500">{data.nama_layanan}</div>
-      </div>
-      {/* Bagian bawah: rincian status (menunggu, diproses, selesai, batal) */}
-      <div className="border-t border-gray-100 py-2 flex items-center justify-center gap-3 text-sm">
-        <AngkaStatus ikon={Clock3} warna="text-red-500" nilai={data.menunggu} judul="Menunggu" />
-        <AngkaStatus ikon={RefreshCw} warna="text-amber-500" nilai={data.diproses} judul="Sedang diproses" />
-        <AngkaStatus ikon={CheckCircle2} warna="text-green-600" nilai={data.selesai} judul="Selesai" />
-        {data.dibatalkan > 0 && (
-          <AngkaStatus ikon={XCircle} warna="text-gray-400" nilai={data.dibatalkan} judul="Dibatalkan / tidak hadir (tidak dihitung)" />
+        {data.total > 0 && (
+          <span className="text-xs font-semibold text-emerald-600">{persen}% selesai</span>
         )}
+      </div>
+
+      {/* Angka besar = total permohonan */}
+      <div>
+        <div className="text-4xl font-extrabold leading-none tracking-tight text-dinsos-900">{data.total}</div>
+        <div className="mt-1 text-sm text-gray-500">{data.nama_layanan}</div>
+      </div>
+
+      {/* Batang kemajuan + chip status */}
+      <BatangKemajuan data={data} />
+      <div className="flex flex-wrap gap-1.5">
+        <ChipStatus jenis="menunggu" nilai={data.menunggu} />
+        <ChipStatus jenis="diproses" nilai={data.diproses} />
+        <ChipStatus jenis="selesai" nilai={data.selesai} />
+        {data.dibatalkan > 0 && <ChipStatus jenis="dibatalkan" nilai={data.dibatalkan} />}
       </div>
     </div>
   )
 }
 
-// Kartu ringkasan di bagian atas halaman
-function KartuRingkasan({ label, nilai, warna }) {
+// Kartu ringkasan berikon di bagian atas halaman
+function KartuRingkasan({ jenis, nilai }) {
+  const w = WARNA[jenis]
+  const Ikon = w.ikon
   return (
-    <div className="bg-white rounded-lg border border-gray-100 shadow-sm px-4 py-3">
-      <div className="text-xs text-gray-500">{label}</div>
-      <div className={`text-2xl font-bold ${warna}`}>{nilai}</div>
+    <div className="flex items-center gap-3 rounded-2xl border border-dinsos-50 bg-white p-4 shadow-sm">
+      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${w.latar} ${w.teks}`}>
+        <Ikon size={22} strokeWidth={2.2} />
+      </div>
+      <div>
+        <div className="text-xs font-medium text-gray-500">{jenis === 'dibatalkan' ? 'Batal / tidak hadir' : w.label}</div>
+        <div className="text-2xl font-extrabold text-gray-900">{nilai}</div>
+      </div>
     </div>
   )
 }
@@ -116,7 +162,7 @@ function unduhCSV(rekap) {
     .map((b) => b.map((sel) => `"${String(sel).replace(/"/g, '""')}"`).join(';'))
     .join('\r\n')
   // Tanda BOM (kode FEFF) di awal file agar huruf terbaca benar di Excel
-  const berkas = new Blob(['\uFEFF' + isi], { type: 'text/csv;charset=utf-8' })
+  const berkas = new Blob(['﻿' + isi], { type: 'text/csv;charset=utf-8' })
   const tautan = document.createElement('a')
   tautan.href = URL.createObjectURL(berkas)
   tautan.download = `rekap-layanan_${rekap.dari}_sd_${rekap.sampai}.csv`
@@ -135,9 +181,10 @@ export default function RekapLayanan() {
   const [dari, setDari] = useState(`${bulanIni}-01`)
   const [sampai, setSampai] = useState(hariIni)
 
-  // Hasil rekap, status muat, dan pesan error
+  // Hasil rekap, status muat, waktu pembaruan terakhir, dan pesan error
   const [rekap, setRekap] = useState(null)
   const [memuat, setMemuat] = useState(true)
+  const [diperbarui, setDiperbarui] = useState(null)
   const [galat, setGalat] = useState('')
 
   // Rentang tanggal yang dikirim ke Supabase sesuai pilihan periode
@@ -155,6 +202,7 @@ export default function RekapLayanan() {
     try {
       const res = await api.get(`/rekap-layanan/${rentang.dari}/${rentang.sampai}`)
       setRekap(res.data)
+      setDiperbarui(new Date())
       setGalat('')
     } catch (err) {
       setGalat(pesanError(err, 'Gagal memuat rekap layanan.'))
@@ -177,33 +225,57 @@ export default function RekapLayanan() {
   const teksPeriode = rekap
     ? rekap.dari === rekap.sampai
       ? tanggalPanjang(rekap.dari)
-      : `${tanggalPanjang(rekap.dari)} s.d. ${tanggalPanjang(rekap.sampai)}`
-    : ''
+      : `${tanggalPanjang(rekap.dari)} – ${tanggalPanjang(rekap.sampai)}`
+    : 'Memuat...'
+
+  // Persentase selesai secara keseluruhan
+  const persenSelesai = rekap?.total.total ? Math.round((rekap.total.selesai / rekap.total.total) * 100) : 0
 
   return (
-    <div className="space-y-5">
-      {/* Judul halaman (pita biru seperti dasbor contoh) */}
-      <div className="rounded-xl bg-gradient-to-r from-indigo-400 to-sky-400 text-white px-6 py-5 shadow-sm">
-        <div className="flex items-center gap-3">
-          <BarChart3 size={28} />
+    <div className="mx-auto max-w-7xl space-y-5 p-4 md:p-6">
+      {/* ===== Banner judul (gradasi biru dinsos, sama seperti banner dashboard petugas) ===== */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-dinsos-700 via-dinsos-600 to-dinsos-400 p-6 text-white shadow-lg shadow-dinsos-200 md:p-8">
+        {/* Hiasan lingkaran samar di latar belakang */}
+        <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-20 right-32 h-48 w-48 rounded-full bg-sky-300/20 blur-2xl" />
+
+        <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Rekap Layanan</h1>
-            <p className="text-sm opacity-90">Jumlah permohonan per jenis layanan (tag) — {teksPeriode || 'memuat...'}</p>
+            {/* Lencana "Live": data diperbarui otomatis */}
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" />
+              </span>
+              Live · diperbarui tiap 30 detik
+            </span>
+            <h1 className="mt-3 flex items-center gap-3 text-3xl font-extrabold tracking-tight md:text-4xl">
+              <BarChart3 size={34} strokeWidth={2.4} /> Rekap Layanan
+            </h1>
+            <p className="mt-1 text-sm text-white/85 md:text-base">Jumlah permohonan per jenis layanan · {teksPeriode}</p>
+          </div>
+
+          {/* Angka total besar di sisi kanan banner */}
+          <div className="rounded-2xl bg-white/15 px-5 py-4 backdrop-blur md:text-right">
+            <div className="text-xs font-semibold uppercase tracking-wider text-white/80">Total permohonan</div>
+            <div className="text-5xl font-black leading-tight">{rekap ? rekap.total.total : '–'}</div>
+            <div className="text-xs text-white/80">{persenSelesai}% sudah selesai</div>
           </div>
         </div>
       </div>
 
-      {/* Pilihan periode + tombol unduh */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-wrap items-end gap-3">
-        <div className="flex flex-wrap gap-2">
+      {/* ===== Pilihan periode + tombol unduh ===== */}
+      <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-dinsos-50 bg-white p-3 shadow-sm">
+        {/* Tombol periode berbentuk "segmented control" */}
+        <div className="flex flex-wrap gap-1 rounded-2xl bg-dinsos-50 p-1">
           {PILIHAN_PERIODE.map((p) => (
             <button
               key={p.kunci}
               onClick={() => { setPeriode(p.kunci); setMemuat(true) }}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+              className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
                 periode === p.kunci
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  ? 'bg-dinsos-700 text-white shadow-md shadow-dinsos-200'
+                  : 'text-dinsos-800 hover:bg-white'
               }`}
             >
               {p.label}
@@ -213,42 +285,41 @@ export default function RekapLayanan() {
 
         {/* Pilih bulan tertentu, misalnya untuk laporan bulanan */}
         {periode === 'pilih-bulan' && (
-          <label className="text-sm text-gray-600 flex flex-col">
+          <label className="flex flex-col text-xs font-semibold text-gray-500">
             Bulan
-            <input
-              type="month"
-              value={bulanDipilih}
-              max={bulanIni}
-              onChange={(e) => setBulanDipilih(e.target.value)}
-              className="mt-1 border border-gray-300 rounded-lg px-2 py-1.5"
-            />
+            <input type="month" value={bulanDipilih} max={bulanIni} onChange={(e) => setBulanDipilih(e.target.value)} className={KELAS_INPUT} />
           </label>
         )}
 
         {/* Pilih rentang tanggal bebas */}
         {periode === 'rentang' && (
           <>
-            <label className="text-sm text-gray-600 flex flex-col">
+            <label className="flex flex-col text-xs font-semibold text-gray-500">
               Dari tanggal
-              <input type="date" value={dari} max={sampai || hariIni} onChange={(e) => setDari(e.target.value)}
-                className="mt-1 border border-gray-300 rounded-lg px-2 py-1.5" />
+              <input type="date" value={dari} max={sampai || hariIni} onChange={(e) => setDari(e.target.value)} className={KELAS_INPUT} />
             </label>
-            <label className="text-sm text-gray-600 flex flex-col">
+            <label className="flex flex-col text-xs font-semibold text-gray-500">
               Sampai tanggal
-              <input type="date" value={sampai} min={dari} max={hariIni} onChange={(e) => setSampai(e.target.value)}
-                className="mt-1 border border-gray-300 rounded-lg px-2 py-1.5" />
+              <input type="date" value={sampai} min={dari} max={hariIni} onChange={(e) => setSampai(e.target.value)} className={KELAS_INPUT} />
             </label>
           </>
         )}
 
-        {/* Tombol unduh hasil rekap untuk laporan (dibuka dengan Excel) */}
-        <button
-          onClick={() => rekap && unduhCSV(rekap)}
-          disabled={!rekap}
-          className="ml-auto inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
-        >
-          <Download size={16} /> Unduh Excel (CSV)
-        </button>
+        {/* Info pembaruan terakhir + tombol unduh hasil rekap (dibuka dengan Excel) */}
+        <div className="ml-auto flex items-center gap-3">
+          {diperbarui && (
+            <span className="hidden text-xs text-gray-400 lg:inline">
+              Diperbarui {diperbarui.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
+          )}
+          <button
+            onClick={() => rekap && unduhCSV(rekap)}
+            disabled={!rekap}
+            className="inline-flex items-center gap-2 rounded-xl bg-dinsos-700 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-dinsos-200 transition hover:bg-dinsos-800 disabled:opacity-50"
+          >
+            <Download size={16} /> Unduh Excel
+          </button>
+        </div>
       </div>
 
       {/* Pesan jika gagal memuat */}
@@ -256,32 +327,48 @@ export default function RekapLayanan() {
 
       {memuat && !rekap ? (
         // Tampilan saat pertama kali memuat
-        <div className="flex items-center justify-center gap-2 py-16 text-gray-500">
+        <div className="flex items-center justify-center gap-2 py-16 text-dinsos-700">
           <Loader2 className="animate-spin" size={20} /> Memuat rekap...
         </div>
       ) : rekap && (
         <>
-          {/* Ringkasan keseluruhan */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <KartuRingkasan label="Total permohonan" nilai={rekap.total.total} warna="text-indigo-900" />
-            <KartuRingkasan label="Menunggu" nilai={rekap.total.menunggu} warna="text-red-500" />
-            <KartuRingkasan label="Sedang diproses" nilai={rekap.total.diproses} warna="text-amber-500" />
-            <KartuRingkasan label="Selesai" nilai={rekap.total.selesai} warna="text-green-600" />
-            <KartuRingkasan label="Batal / tidak hadir" nilai={rekap.total.dibatalkan} warna="text-gray-500" />
+          {/* ===== Ringkasan per status ===== */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <KartuRingkasan jenis="menunggu" nilai={rekap.total.menunggu} />
+            <KartuRingkasan jenis="diproses" nilai={rekap.total.diproses} />
+            <KartuRingkasan jenis="selesai" nilai={rekap.total.selesai} />
+            <KartuRingkasan jenis="dibatalkan" nilai={rekap.total.dibatalkan} />
           </div>
 
-          {/* Kotak per jenis layanan (4 kolom di komputer, 2 di tablet, 1 di HP) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {rekap.layanan.map((l) => <KotakLayanan key={l.id} data={l} />)}
+          {/* Pesan ramah jika belum ada permohonan sama sekali */}
+          {rekap.total.total === 0 && rekap.total.dibatalkan === 0 && (
+            <div className="flex items-center gap-3 rounded-2xl border border-dashed border-dinsos-200 bg-dinsos-50/60 px-5 py-4 text-sm text-dinsos-800">
+              <Sparkles size={20} className="shrink-0" />
+              Belum ada permohonan pada periode ini. Kartu di bawah akan terisi otomatis begitu ada antrean baru.
+            </div>
+          )}
+
+          {/* ===== Judul daftar layanan ===== */}
+          <div className="flex items-center gap-2 pt-1 text-sm font-bold uppercase tracking-wider text-dinsos-900">
+            <Layers size={16} /> Per jenis layanan
           </div>
 
-          {/* Keterangan ikon */}
-          <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
-            <span className="inline-flex items-center gap-1"><Tag size={14} /> Angka besar = total permohonan (tanpa yang batal)</span>
-            <span className="inline-flex items-center gap-1 text-red-500"><Clock3 size={14} /> Menunggu</span>
-            <span className="inline-flex items-center gap-1 text-amber-500"><RefreshCw size={14} /> Sedang diproses</span>
-            <span className="inline-flex items-center gap-1 text-green-600"><CheckCircle2 size={14} /> Selesai</span>
-            <span className="inline-flex items-center gap-1 text-gray-400"><XCircle size={14} /> Batal / tidak hadir</span>
+          {/* Kartu per jenis layanan (4 kolom di komputer, 2 di tablet, 1 di HP) */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {rekap.layanan.map((l) => <KartuLayanan key={l.id} data={l} />)}
+          </div>
+
+          {/* Keterangan warna */}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+            <span className="font-semibold">Keterangan:</span>
+            {Object.keys(WARNA).map((k) => {
+              const Ikon = WARNA[k].ikon
+              return (
+                <span key={k} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-semibold ${WARNA[k].latar} ${WARNA[k].teks}`}>
+                  <Ikon size={12} strokeWidth={2.5} /> {k === 'dibatalkan' ? 'Batal / tidak hadir (tidak dihitung)' : WARNA[k].label}
+                </span>
+              )
+            })}
           </div>
         </>
       )}
