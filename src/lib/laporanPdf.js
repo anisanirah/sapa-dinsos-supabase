@@ -2,7 +2,7 @@
 // FILE: lib/laporanPdf.js
 // DESKRIPSI: Membuat file PDF "Rekap Permohonan Layanan" (kertas A4) dari data rekap.
 // Isi laporan (tersusun runtut agar enak dibaca saat laporan akhir bulan):
-//   Kop surat Dinas Sosial -> Judul & periode -> Keterangan laporan
+//   Kop surat Dinas Sosial (teks, tanpa logo) -> Judul & periode -> Keterangan laporan
 //   A. Ringkasan          -> angka total, selesai, diproses, menunggu, batal, online/langsung
 //   B. Rincian per jenis layanan (tabel, diurutkan dari yang terbanyak) + baris jumlah
 //   C. Grafik jumlah permohonan per layanan (batang mendatar)
@@ -56,30 +56,6 @@ export function teksPeriode(rekap, jenis) {
 // Nama jenis laporan untuk keterangan
 const NAMA_JENIS = { hari: 'Harian', bulan: 'Bulanan', 'pilih-bulan': 'Bulanan', rentang: 'Rentang tanggal' }
 
-// Mengambil logo dari folder public lalu mengubahnya menjadi data gambar untuk PDF
-async function muatLogo() {
-  try {
-    const res = await fetch('/images/logo-dinsos.png')
-    const blob = await res.blob()
-    const data = await new Promise((selesai) => {
-      const baca = new FileReader()
-      baca.onload = () => selesai(baca.result)
-      baca.readAsDataURL(blob)
-    })
-    // Ukuran asli logo untuk menjaga perbandingan lebar:tinggi
-    const ukuran = await new Promise((selesai) => {
-      const img = new Image()
-      img.onload = () => selesai({ w: img.naturalWidth, h: img.naturalHeight })
-      img.onerror = () => selesai({ w: 1, h: 1 })
-      img.src = data
-    })
-    return { data, ...ukuran }
-  } catch {
-    // Logo gagal dimuat: laporan tetap dibuat tanpa logo
-    return null
-  }
-}
-
 // Menulis judul bagian (A, B, C, D) dengan garis aksen biru di kiri
 function judulBagian(doc, y, teks) {
   doc.setFillColor(...BIRU)
@@ -108,28 +84,22 @@ export async function unduhLaporanPdf(rekap, jenisPeriode, namaPetugas) {
   // Muat pustaka PDF hanya saat dibutuhkan (agar aplikasi tetap ringan)
   const [{ jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')])
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
-  const logo = await muatLogo()
   const periode = teksPeriode(rekap, jenisPeriode)
   const sekarang = new Date()
   const waktuCetak = `${sekarang.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}, pukul ${sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`
   const t = rekap.total
 
-  // ===== 1. KOP SURAT =====
-  if (logo) {
-    const tinggiLogo = 24
-    const lebarLogo = (logo.w / logo.h) * tinggiLogo
-    doc.addImage(logo.data, 'PNG', MARGIN, 11, lebarLogo, tinggiLogo)
-  }
+  // ===== 1. KOP SURAT (teks saja, tanpa logo; lambang resmi bisa ditambahkan nanti) =====
   doc.setTextColor(...HITAM)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)
-  doc.text(INSTANSI.pemda, LEBAR / 2 + 8, 17, { align: 'center' })
+  doc.text(INSTANSI.pemda, LEBAR / 2, 17, { align: 'center' })
   doc.setFontSize(17)
-  doc.text(INSTANSI.dinas, LEBAR / 2 + 8, 25, { align: 'center' })
+  doc.text(INSTANSI.dinas, LEBAR / 2, 25, { align: 'center' })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8.5)
-  doc.text(INSTANSI.alamat, LEBAR / 2 + 8, 30.5, { align: 'center', maxWidth: 150 })
-  doc.text(INSTANSI.kontak, LEBAR / 2 + 8, 34.5, { align: 'center' })
+  doc.text(INSTANSI.alamat, LEBAR / 2, 30.5, { align: 'center', maxWidth: 170 })
+  doc.text(INSTANSI.kontak, LEBAR / 2, 34.5, { align: 'center' })
   // Garis ganda di bawah kop (tebal lalu tipis)
   doc.setDrawColor(...HITAM)
   doc.setLineWidth(0.9)
