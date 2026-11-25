@@ -138,65 +138,148 @@ DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
 }
 
 /* --- 5. Dropdown Profil --- */
+/* Kotak menu putih bersudut bulat yang muncul di bawah tombol profil */
 .profile-dropdown {
   position: absolute;
-  top: calc(100% + 8px);  /* 8px di bawah tombol profil */
+  top: calc(100% + 12px);  /* 12px di bawah tombol profil */
   right: 0;
+  width: 300px;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  min-width: 160px;
-  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(15, 30, 51, 0.18);
+  border: 1px solid #e8f0fe;
   z-index: 1001;  /* Di atas topbar */
+  animation: dropdownMuncul 0.15s ease-out;
 }
 
-/* Header dropdown dengan info user */
+/* Segitiga kecil penunjuk ke tombol profil */
+.dropdown-panah {
+  position: absolute;
+  top: -7px;
+  right: 40px;
+  width: 14px;
+  height: 14px;
+  background: #f1f7ff;
+  border-left: 1px solid #e8f0fe;
+  border-top: 1px solid #e8f0fe;
+  transform: rotate(45deg);
+}
+
+/* Bagian atas: latar biru muda dengan hiasan gelombang */
 .dropdown-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f4f8;
-  background: #f8fafc;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 18px 18px 0 0;
+  border-bottom: 1px solid #e3edf9;
+  background: linear-gradient(180deg, #f1f7ff, #ffffff);
 }
 
-.dropdown-header .dropdown-foto {
-  margin-bottom: 8px;  /* jarak foto ke nama di menu profil */
+/* Gelombang biru tipis di pojok kanan bawah header */
+.dropdown-gelombang {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 70%;
+  fill: #dbeafe;
+  opacity: 0.7;
+  pointer-events: none;
 }
 
+/* Foto & teks berada di atas gelombang */
+.dropdown-header .dropdown-foto,
+.dropdown-identitas {
+  position: relative;
+}
+
+.dropdown-identitas {
+  min-width: 0;
+}
+
+/* Nama pengguna */
 .dropdown-header .dropdown-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a2e3a;
-  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #0f1e33;
+  margin: 0 0 6px 0;
+  overflow-wrap: anywhere;  /* nama panjang turun ke baris berikutnya, tidak terpotong */
 }
 
+/* Label peran berbentuk pil biru muda */
 .dropdown-header .dropdown-role {
-  font-size: 12px;
-  color: #5a6b7a;
-  margin: 0;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1565c0;
+  background: #dbeafe;
+  padding: 4px 12px;
+  border-radius: 999px;
 }
 
-/* Tombol logout di dropdown */
+/* Daftar menu di bawah header */
+.dropdown-menu {
+  padding: 10px;
+}
+
+/* Satu baris menu (ikon + teks rata kiri) */
 .dropdown-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 14px;
   background: none;
   border: none;
-  color: #dc3545;  /* Warna merah untuk logout */
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 12px;
+  color: #0f1e33;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
-/* Efek hover pada tombol logout */
+/* Efek saat kursor di atas menu: latar biru muda */
 .dropdown-item:hover {
-  background: #fdecea;
+  background: #e8f1fd;
 }
 
 .dropdown-item svg {
-  color: #dc3545;
+  color: #0f1e33;
+  flex-shrink: 0;
+}
+
+/* Ikon Profil Saya berwarna biru */
+.dropdown-item svg.dropdown-ikon-biru {
+  color: #1565c0;
+}
+
+/* Garis tipis pemisah sebelum Logout */
+.dropdown-garis {
+  height: 1px;
+  background: #e3edf9;
+  margin: 8px 6px;
+}
+
+/* Logout berwarna merah */
+.dropdown-logout,
+.dropdown-logout svg {
+  color: #dc2626;
+}
+
+.dropdown-logout:hover {
+  background: #fdecea;
+}
+
+/* Animasi muncul halus */
+@keyframes dropdownMuncul {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- 6. Responsive Design --- */

@@ -153,31 +153,50 @@ function TopBar({ onToggleMenu }) {
         {/* Dropdown menu (hanya muncul jika showDropdown = true) */}
         {showDropdown && (
           <div className="profile-dropdown">
-            {/* Info user di bagian atas dropdown */}
+            {/* Segitiga kecil yang menunjuk ke tombol profil */}
+            <span className="dropdown-panah" aria-hidden="true" />
+
+            {/* Bagian atas: foto, nama, dan peran (latar biru muda bergelombang) */}
             <div className="dropdown-header">
-              <FotoProfil path={user?.profile?.foto_path} nama={displayName} ukuran={44} className="dropdown-foto" />
-              <p className="dropdown-name">{displayName}</p>
-              <p className="dropdown-role">
-                {userRole === 'petugas_pendaftaran' ? 'Petugas Pendaftaran' :
-                 userRole === 'petugas_pelayanan' ? 'Petugas Pelayanan' : 'Pengunjung'}
-              </p>
+              <svg className="dropdown-gelombang" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M90 100 C 170 85, 220 40, 300 25 L 300 100 Z" />
+              </svg>
+              <FotoProfil
+                path={user?.profile?.foto_path}
+                nama={displayName}
+                ukuran={64}
+                warna="bg-blue-100 text-[#1565c0]"
+                className="dropdown-foto"
+              />
+              <div className="dropdown-identitas">
+                <p className="dropdown-name">{displayName}</p>
+                <span className="dropdown-role">
+                  {userRole === 'petugas_pendaftaran' ? 'Petugas Pendaftaran' :
+                   userRole === 'petugas_pelayanan' ? 'Petugas Pelayanan' : 'Pengunjung'}
+                </span>
+              </div>
             </div>
 
             {/* Menu akun */}
-            <button onClick={() => { setShowDropdown(false); navigate('/profil') }} className="dropdown-item">
-              <UserRound size={16} strokeWidth={2} />
-              <span>Profil Saya</span>
-            </button>
-            <button onClick={() => { setShowDropdown(false); navigate('/pengaturan') }} className="dropdown-item">
-              <Settings size={16} strokeWidth={2} />
-              <span>Pengaturan Akun</span>
-            </button>
+            <div className="dropdown-menu">
+              <button onClick={() => { setShowDropdown(false); navigate('/profil') }} className="dropdown-item">
+                <UserRound size={20} strokeWidth={2} className="dropdown-ikon-biru" />
+                <span>Profil Saya</span>
+              </button>
+              <button onClick={() => { setShowDropdown(false); navigate('/pengaturan') }} className="dropdown-item">
+                <Settings size={20} strokeWidth={2} />
+                <span>Pengaturan Akun</span>
+              </button>
 
-            {/* Tombol Logout */}
-            <button onClick={handleLogout} className="dropdown-item">
-              <LogOut size={16} strokeWidth={2} />
-              <span>Logout</span>
-            </button>
+              {/* Garis pemisah sebelum Logout */}
+              <div className="dropdown-garis" />
+
+              {/* Tombol Logout (merah) */}
+              <button onClick={handleLogout} className="dropdown-item dropdown-logout">
+                <LogOut size={20} strokeWidth={2} />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
