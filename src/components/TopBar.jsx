@@ -23,6 +23,9 @@ import { useNavigate } from 'react-router-dom'
 // 4. Import useAuth untuk mendapatkan data user dan fungsi logout
 import { useAuth } from '../context/AuthContext'
 
+// Lingkaran foto profil
+import FotoProfil from './FotoProfil'
+
 // 5. Import file CSS untuk styling topbar
 import './TopBar.css'
 
@@ -137,10 +140,8 @@ function TopBar({ onToggleMenu }) {
           className="topbar-profile"
           onClick={() => setShowDropdown(!showDropdown)}
         >
-          {/* Ikon user bulat */}
-          <div className="profile-icon">
-            <UserRound size={16} strokeWidth={2} />
-          </div>
+          {/* Foto profil bulat (huruf depan nama jika belum ada foto) */}
+          <FotoProfil path={user?.profile?.foto_path} nama={displayName} ukuran={32} warna="bg-white text-[#0d5bc4]" />
           {/* Nama user */}
           <span>{displayName}</span>
           {/* Ikon panah bawah */}
@@ -154,6 +155,7 @@ function TopBar({ onToggleMenu }) {
           <div className="profile-dropdown">
             {/* Info user di bagian atas dropdown */}
             <div className="dropdown-header">
+              <FotoProfil path={user?.profile?.foto_path} nama={displayName} ukuran={44} className="dropdown-foto" />
               <p className="dropdown-name">{displayName}</p>
               <p className="dropdown-role">
                 {userRole === 'petugas_pendaftaran' ? 'Petugas Pendaftaran' :

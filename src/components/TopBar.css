@@ -157,6 +157,10 @@ DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
   background: #f8fafc;
 }
 
+.dropdown-header .dropdown-foto {
+  margin-bottom: 8px;  /* jarak foto ke nama di menu profil */
+}
+
 .dropdown-header .dropdown-name {
   font-size: 14px;
   font-weight: 600;

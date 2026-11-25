@@ -28,6 +28,9 @@ import { useState, useEffect } from 'react'
 // 4. Import useAuth untuk mendapatkan data user yang sedang login
 import { useAuth } from '../context/AuthContext'
 
+// Lingkaran foto profil
+import FotoProfil from './FotoProfil'
+
 // 5. Import file CSS untuk styling sidebar
 import './Sidebar.css'
 
@@ -188,11 +191,15 @@ function Sidebar({ terbuka = false, onTutup = () => {} }) {
       <div className="sidebar-footer">
         {/* Info user: nama dan role */}
         <div className="sidebar-user-info">
-          <span className="user-name">{userName}</span>
-          <span className="user-role">
-            {userRole === 'petugas_pendaftaran' ? 'Petugas Pendaftaran' :
-             userRole === 'petugas_pelayanan' ? 'Petugas Pelayanan' : 'Pengunjung'}
-          </span>
+          {/* Foto profil kecil di samping nama */}
+          <FotoProfil path={user?.profile?.foto_path} nama={userName} ukuran={42} />
+          <div className="sidebar-user-teks">
+            <span className="user-name">{userName}</span>
+            <span className="user-role">
+              {userRole === 'petugas_pendaftaran' ? 'Petugas Pendaftaran' :
+               userRole === 'petugas_pelayanan' ? 'Petugas Pelayanan' : 'Pengunjung'}
+            </span>
+          </div>
         </div>
 
         {/* Tombol Logout dengan fungsi handleLogout */}
