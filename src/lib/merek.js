@@ -13,3 +13,10 @@ export const SLOGAN = 'Sapa, Daftar, Dilayani'
 
 // Nama instansi pemilik aplikasi
 export const INSTANSI = 'Dinas Sosial Kabupaten Majalengka'
+
+// Alamat kantor Dinas Sosial (dipakai di Informasi Pelayanan, tiket cetak, dan laporan PDF)
+export const ALAMAT_KANTOR = 'Jl. Raya K.H. Abdul Halim No. 498, Tonjong, Kec. Majalengka, Kabupaten Majalengka'
+
+// Hari dan jam pelayanan kantor
+export const HARI_LAYANAN = 'Senin – Jumat'
+export const JAM_LAYANAN = '08.00 – 15.00 WIB'

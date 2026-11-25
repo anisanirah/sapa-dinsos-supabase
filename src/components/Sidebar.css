@@ -7,8 +7,8 @@ Dengan logout yang selalu terlihat
 /* Sidebar putih dengan border kanan, fixed di kiri */
 /* Tinggi disesuaikan: 100vh dikurangi tinggi TopBar (64px) */
 .sidebar {
-  width: 240px;
-  min-width: 240px;
+  width: 256px;
+  min-width: 256px;
   background: white;
   border-right: 1px solid #e0e6ed;
   display: flex;
@@ -25,11 +25,11 @@ Dengan logout yang selalu terlihat
 
 /* --- 2. Label "MENU" --- */
 .sidebar-menu-label {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: #8a9a92;
-  font-weight: 600;
-  padding: 0 20px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: #334155;
+  font-weight: 700;
+  padding: 0 24px;
   margin-bottom: 12px;
 }
 
@@ -38,8 +38,8 @@ Dengan logout yang selalu terlihat
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 0 12px;
-  flex: 1; /* Mengisi ruang yang tersedia */
+  padding: 0 14px;
+  /* Tidak lagi mengisi seluruh tinggi: info akun langsung di bawah menu */
 }
 
 /* --- 4. Item Menu --- */
@@ -48,10 +48,10 @@ Dengan logout yang selalu terlihat
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: #4a5568;
+  color: #1e293b;
   text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 500;
   transition: all 0.2s;
 }
@@ -64,9 +64,10 @@ Dengan logout yang selalu terlihat
 
 /* Menu yang sedang aktif (halaman saat ini) */
 .sidebar-menu-item.active {
-  background-color: #1976d2;
+  background-color: #0d5bc4;
   color: white;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(13, 91, 196, 0.25);
 }
 
 /* Ikon menu */
@@ -78,10 +79,10 @@ Dengan logout yang selalu terlihat
 }
 
 /* --- 5. Footer Sidebar --- */
-/* Footer akan selalu di bawah karena margin-top: auto di parent */
+/* Footer (info akun + logout) tampil tepat di bawah daftar menu */
 .sidebar-footer {
-  padding: 16px 12px;
-  margin-top: auto; /* ← PENTING: Dorong footer ke bawah */
+  padding: 16px 14px;
+  margin-top: 16px; /* Info akun & logout langsung di bawah menu */
   border-top: 1px solid #e0e6ed;
   background: transparent;
   flex-shrink: 0; /* Footer tidak boleh mengecil */
@@ -99,15 +100,15 @@ Dengan logout yang selalu terlihat
 
 /* Nama user */
 .user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a2e3a;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f1e33;
 }
 
 /* Role user */
 .user-role {
-  font-size: 11px;
-  color: #8a9a92;
+  font-size: 13px;
+  color: #64748b;
   text-transform: capitalize;
 }
 
@@ -119,9 +120,9 @@ Dengan logout yang selalu terlihat
   padding: 10px 14px;
   color: #dc3545;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 10px;
   background: transparent;
   border: none;
   cursor: pointer;

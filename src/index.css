@@ -114,7 +114,7 @@ LAYOUT APLIKASI
 /* Konten utama (di sebelah kanan Sidebar) */
 .app-content {
   flex: 1;
-  margin-left: 240px; /* Sesuaikan dengan lebar Sidebar */
+  margin-left: 256px; /* Sesuaikan dengan lebar Sidebar */
   min-width: 0;
   background: #f5f7fa;
   padding-bottom: 80px; /* Tambah padding bawah agar konten tidak terpotong */

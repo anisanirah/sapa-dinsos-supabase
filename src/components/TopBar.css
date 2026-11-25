@@ -6,7 +6,7 @@ DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
 /* --- 1. Container Utama TopBar --- */
 /* TopBar berwarna biru solid, sticky di atas, dengan shadow */
 .topbar-global {
-  background-color: #1976d2;  /* Warna biru DINSOS */
+  background: linear-gradient(90deg, #0b55b8, #0d5bc4);  /* Warna biru DINSOS */
   color: white;
   padding: 12px 24px;
   display: flex;
@@ -28,7 +28,7 @@ DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
 
 /* Logo DINSOS */
 .topbar-logo {
-  height: 44px;
+  height: 48px;
   width: auto;
 }
 
@@ -40,17 +40,17 @@ DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
 
 /* Judul "DINSOS" */
 .topbar-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   line-height: 1.1;
 }
 
 /* Subtitle nama instansi */
 .topbar-subtitle {
-  font-size: 9px;
-  opacity: 0.9;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  opacity: 0.95;
+  letter-spacing: 0.3px;
 }
 
 /* Tombol menu hamburger */
@@ -71,20 +71,28 @@ DESKRIPSI: Styling untuk TopBar biru yang muncul di semua halaman.
   display: flex;
   align-items: center;
   gap: 16px;
-  font-size: 14px;
+  font-size: 16px;
+}
+
+/* Garis tegak tipis pemisah tanggal dan jam */
+.topbar-pemisah {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.45);
 }
 
 /* Container tanggal dengan ikon */
 .topbar-date {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 /* Tampilan jam */
 .topbar-time {
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* --- 4. Bagian Kanan: Profil User --- */

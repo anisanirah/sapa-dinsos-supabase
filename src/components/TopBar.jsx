@@ -122,9 +122,11 @@ function TopBar({ onToggleMenu }) {
       {/* BAGIAN TENGAH: Tanggal dan jam */}
       <div className="topbar-center">
         <span className="topbar-date">
-          <CalendarDays size={16} strokeWidth={2} />
+          <CalendarDays size={20} strokeWidth={2} />
           {formatTanggal(waktuSekarang)}
         </span>
+        {/* Garis tegak pemisah tanggal dan jam */}
+        <span className="topbar-pemisah" aria-hidden="true" />
         <span className="topbar-time">{formatJam(waktuSekarang)}</span>
       </div>
 

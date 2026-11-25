@@ -1,7 +1,7 @@
 // ========================================
 // FILE: DashboardPengunjung.jsx
 // DESKRIPSI: Halaman Dashboard untuk Pengunjung (role: pengunjung).
-// Menampilkan banner hero, daftar layanan populer, form ambil antrean,
+// Menampilkan banner judul, form ambil antrean,
 // status antrean aktif pengguna, dan informasi pelayanan.
 // Data layanan dan antrean diambil dari Supabase (lewat lib/api.js).
 // 
@@ -24,29 +24,31 @@ import { useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 // Data login (untuk cek status verifikasi email)
 import { useAuth } from '../context/AuthContext'
-import { pesanError } from '../lib/antrean'
+import { pesanError, WARNA_STATUS } from '../lib/antrean'
+// Nama aplikasi, instansi, dan jam pelayanan (satu sumber untuk semua halaman)
+import { NAMA_APLIKASI, INSTANSI, HARI_LAYANAN, JAM_LAYANAN } from '../lib/merek'
+// Banner judul bersama
+import KepalaHalaman from '../components/KepalaHalaman'
 import FormDataTamu, { DATA_TAMU_KOSONG } from '../components/FormDataTamu'
 // Modal tiket bukti pendaftaran antrean
 import TiketAntrean from '../components/TiketAntrean'
 
 // 5. Import ikon dari library lucide-react untuk visualisasi UI
 import {
-  Heart,          // Ikon untuk Bantuan Sosial Tunai
-  Users,          // Ikon untuk Rehabilitasi Sosial
-  ShieldCheck,    // Ikon untuk Perlindungan Sosial
-  Layers,         // Ikon untuk Pemberdayaan Sosial
   Ticket,         // Ikon untuk antrean/tiket
-  CalendarDays,   // Ikon untuk tanggal/riwayat
+  CalendarDays,   // Ikon untuk tanggal antrean
   Clock,          // Ikon untuk waktu/jam
-  FileText,       // Ikon untuk dokumen/informasi
+  FileText,       // Ikon untuk dokumen persyaratan
   Info,           // Ikon untuk informasi
   ArrowRight,     // Ikon panah kanan untuk navigasi
+  ChevronDown,    // Ikon panah bawah pada pilihan layanan
   Loader2,        // Ikon loading spinner
   AlertCircle,    // Ikon peringatan untuk error
   X               // Ikon X untuk tutup modal formulir
 } from 'lucide-react'
 
-// 6. Import file CSS untuk styling halaman ini
+// 6. Import file CSS lama: tampilan halaman ini sekarang memakai kelas Tailwind,
+// tetapi beberapa kelas di file ini masih dipakai halaman Antrean, jadi tetap dimuat
 import './DashboardPengunjung.css'
 
 // 7. Definisi komponen DashboardPengunjung
@@ -198,20 +200,6 @@ function DashboardPengunjung() {
     }
   }
 
-  // 20. Fungsi helper untuk menentukan class CSS berdasarkan status antrean
-  // Mengembalikan class yang berbeda untuk setiap status
-  const getStatusColor = (status) => {
-    const colors = {
-      menunggu: 'status-menunggu',
-      terverifikasi: 'status-terverifikasi',
-      dipanggil: 'status-dipanggil',
-      dilayani: 'status-dilayani',
-      selesai: 'status-selesai',
-      dibatalkan: 'status-dibatalkan',
-    }
-    return colors[status] || ''
-  }
-
   // 21. Fungsi helper untuk menampilkan label status dalam Bahasa Indonesia
   const getStatusLabel = (status) => {
     const labels = {
@@ -225,41 +213,25 @@ function DashboardPengunjung() {
     return labels[status] || status
   }
 
-  // 22. Data statis untuk layanan populer (tampilan saja)
-  // Nanti bisa diganti dengan data dari API jika ada field "populer"
-  const layananPopuler = [
-    { icon: Heart, label: 'Bantuan Sosial Tunai', color: 'blue' },
-    { icon: Users, label: 'Rehabilitasi Sosial', color: 'purple' },
-    { icon: ShieldCheck, label: 'Perlindungan Sosial', color: 'indigo' },
-    { icon: Layers, label: 'Pemberdayaan Sosial', color: 'pink' },
-  ]
+  // 22. Ubah waktu antrean menjadi teks singkat, contoh: "20/11/2026, 14.11.44"
+  const formatWaktuSingkat = (waktu) => new Date(waktu).toLocaleString('id-ID')
 
   // 23. Return JSX: Struktur tampilan Dashboard Pengunjung
   return (
-    <div className="dashboard-pengunjung">
+    <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
       {/* ======================================== */}
-      {/* BAGIAN 1: BANNER HERO (SUDAH DIHAPUS GEDUNG) */}
+      {/* BAGIAN 1: BANNER JUDUL */}
       {/* ======================================== */}
-      {/* Banner utama dengan judul sistem saja, tanpa ilustrasi gedung */}
-      <div className="hero-banner">
-        <div className="hero-content">
-          <h1>
-            Selamat datang di SAPA DINSOS <br />
-            Dinas Sosial Kabupaten Majalengka
-          </h1>
-          <p>
-            Ambil antrean, pantau status, dan akses informasi layanan sosial 
-            secara online.
-          </p>
-        </div>
-        {/* ⚠️ CATATAN: hero-illustration (bangunan) sudah DIHAPUS sesuai permintaan */}
-      </div>
+      {/* Banner biru muda berisi nama aplikasi & instansi (komponen bersama) */}
+      <KepalaHalaman
+        judul={NAMA_APLIKASI}
+        subjudul={INSTANSI}
+        deskripsi="Sistem layanan antrean dan informasi pelayanan sosial yang mudah, cepat, dan transparan."
+        judulBiru
+        garisBawah
+      />
 
-      {/* ======================================== */}
-      {/* BAGIAN 2: LAYANAN POPULER */}
-      {/* ======================================== */}
-      {/* Menampilkan 4 layanan utama dalam bentuk kartu */}
       {/* PERINGATAN: email belum diverifikasi -> belum bisa ambil antrean online */}
       {emailBelumVerifikasi && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
@@ -282,192 +254,171 @@ function DashboardPengunjung() {
         </div>
       )}
 
-      <div className="section-layanan">
-        <div className="section-header">
-          <h2>Layanan Populer</h2>
-          {/* Tombol untuk navigasi ke halaman Informasi Pelayanan */}
-          <button 
-            className="btn-lihat-semua" 
-            onClick={() => navigate('/informasi')}
-          >
-            Lihat Semua Layanan <ArrowRight size={16} />
-          </button>
-        </div>
-        <div className="layanan-grid">
-          {/* Looping array layananPopuler untuk render kartu */}
-          {layananPopuler.map((item, idx) => (
-            <div key={idx} className={`layanan-card ${item.color}`}>
-              <item.icon size={40} strokeWidth={1.5} />
-              <h3>{item.label}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* ======================================== */}
-      {/* BAGIAN 3: 2 KOLOM (Ambil Antrean & Antrean Saya) */}
+      {/* BAGIAN 2: 2 KOLOM (Ambil Antrean & Antrean Saya) */}
       {/* ======================================== */}
-      <div className="dua-kolom">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
         {/* Kolom Kiri: Form Ambil Nomor Antrean */}
-        <div className="card-ambil-antrean">
-          <div className="card-header-ambil">
-            <Ticket size={24} strokeWidth={2} className="card-icon" />
-            <h2>Ambil Nomor Antrean</h2>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-7">
+          <div className="flex items-center gap-3 mb-3">
+            <Ticket size={28} strokeWidth={2} className="text-[#1565c0]" />
+            <h2 className="text-xl font-bold text-[#0f1e33]">Ambil Nomor Antrean</h2>
           </div>
-          <p className="card-desc">
-            Pilih layanan yang ingin Anda tuju dan dapatkan nomor antrean 
-            beserta QR Code untuk check-in di kantor.
+          <p className="text-slate-600 mb-5 leading-relaxed">
+            Pilih layanan yang ingin Anda tuju dan dapatkan nomor antrean secara online.
           </p>
 
           {/* Tampilkan pesan error jika ada */}
           {error && (
-            <div className="alert-error">
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">
               <AlertCircle size={16} />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Form pilih layanan */}
-          <div className="form-group">
-            <label>Pilih Layanan</label>
+          {/* Pilihan layanan (panah bawah digambar sendiri agar rapi) */}
+          <div className="relative mb-5">
             <select
               value={selectedLayanan}
               onChange={(e) => setSelectedLayanan(e.target.value)}
-              className="select-layanan"
+              aria-label="Pilih Layanan"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-5 py-3.5 pr-12 text-slate-800 font-medium shadow-sm focus:outline-none focus:border-[#1976d2] focus:ring-4 focus:ring-blue-100"
             >
-              <option value="">-- Pilih Layanan --</option>
-              {/* Looping data layanan dari API untuk option dropdown */}
+              <option value="">Pilih Layanan</option>
+              {/* Looping data layanan dari database untuk pilihan dropdown */}
               {layanans.map((layanan) => (
                 <option key={layanan.id} value={layanan.id}>
                   {layanan.nama_layanan}
                 </option>
               ))}
             </select>
+            <ChevronDown size={20} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-700" />
           </div>
 
-          {/* Tombol Ambil Antrean dengan loading state */}
+          {/* Tombol Ambil Antrean dengan tanda loading */}
           <button
             onClick={bukaFormData}
             disabled={loading || !selectedLayanan}
-            className="btn-ambil-antrean"
+            className="w-full inline-flex items-center justify-center gap-3 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] text-white font-bold py-3.5 shadow-md shadow-blue-200 transition disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
-                <Loader2 className="animate-spin" size={18} />
+                <Loader2 className="animate-spin" size={20} />
                 Memproses...
               </>
             ) : (
               <>
-                <Ticket size={18} />
+                <Ticket size={22} />
                 Ambil Nomor Antrean
+                <ArrowRight size={20} />
               </>
             )}
           </button>
         </div>
 
-        {/* Kolom Kanan: Antrean Saya */}
-        <div className="card-antrean-saya">
-          <div className="card-header-ambil">
-            <CalendarDays size={24} strokeWidth={2} className="card-icon" />
-            <h2>Antrean Saya</h2>
+        {/* Kolom Kanan: Antrean Saya (3 antrean terbaru) */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-7">
+          <div className="flex items-center gap-3 mb-4">
+            <Clock size={28} strokeWidth={2} className="text-[#1565c0]" />
+            <h2 className="text-xl font-bold text-[#0f1e33] flex-1">Antrean Saya</h2>
+            {/* Tautan ke halaman Riwayat Antrean */}
+            {antreans.length > 0 && (
+              <button
+                onClick={() => navigate('/riwayat')}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1565c0] hover:underline"
+              >
+                Lihat Semua <ArrowRight size={18} />
+              </button>
+            )}
           </div>
 
-          {/* Tampilan jika user belum punya antrean */}
+          {/* Tampilan jika pengunjung belum punya antrean */}
           {antreans.length === 0 ? (
-            <div className="empty-state">
-              <Ticket size={64} strokeWidth={1} className="empty-icon" />
-              <h3>Belum ada antrean</h3>
-              <p>Anda belum mengambil nomor antrean.</p>
+            <div className="text-center py-8 text-slate-500">
+              <Ticket size={56} strokeWidth={1} className="mx-auto mb-2 text-slate-300" />
+              <p className="font-semibold text-slate-700">Belum ada antrean</p>
+              <p className="text-sm">Anda belum mengambil nomor antrean.</p>
             </div>
           ) : (
-            /* Tampilkan 3 antrean terbaru user */
-            <div className="antrean-list">
+            <div className="space-y-3">
               {antreans.slice(0, 3).map((antrean) => (
-                <div key={antrean.id} className="antrean-item">
-                  <div className="antrean-nomor">
+                <div key={antrean.id} className="flex items-center gap-3 sm:gap-4 rounded-xl border border-slate-100 bg-slate-50/70 px-3 sm:px-4 py-3">
+                  {/* Nomor antrean dalam kotak biru muda */}
+                  <div className="rounded-lg bg-blue-100/70 px-2.5 sm:px-3 py-1.5 text-lg sm:text-xl font-extrabold text-[#1565c0]">
                     {antrean.nomor_antrean}
                   </div>
-                  <div className="antrean-info">
-                    <div className="antrean-layanan">
-                      {antrean.layanan?.nama_layanan}
-                    </div>
-                    <div className="antrean-waktu">
-                      <Clock size={12} />
-                      {new Date(antrean.created_at).toLocaleString('id-ID')}
-                    </div>
+                  {/* Garis pemisah tipis */}
+                  <span className="hidden sm:block w-px self-stretch bg-slate-200" aria-hidden="true" />
+                  {/* Nama layanan + waktu ambil (+ status di bawahnya khusus layar HP) */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-slate-800">{antrean.layanan?.nama_layanan}</p>
+                    <p className="flex items-center gap-1.5 text-sm text-slate-600">
+                      <CalendarDays size={15} className="flex-shrink-0" />
+                      {formatWaktuSingkat(antrean.created_at)}
+                    </p>
+                    <span className={`sm:hidden inline-block mt-1.5 rounded-full px-3 py-0.5 text-xs font-semibold ${WARNA_STATUS[antrean.status] || 'bg-slate-100 text-slate-700'}`}>
+                      {getStatusLabel(antrean.status)}
+                    </span>
                   </div>
-                  <span className={`status-badge ${getStatusColor(antrean.status)}`}>
+                  {/* Label status berwarna di sisi kanan (layar lebar) */}
+                  <span className={`hidden sm:inline-block rounded-full px-3 py-1 text-sm font-semibold whitespace-nowrap ${WARNA_STATUS[antrean.status] || 'bg-slate-100 text-slate-700'}`}>
                     {getStatusLabel(antrean.status)}
                   </span>
                 </div>
               ))}
             </div>
           )}
+        </div>
+      </div>
 
-          {/* Tombol untuk melihat semua antrean */}
-          {antreans.length > 0 && (
+      {/* ======================================== */}
+      {/* BAGIAN 3: INFORMASI PELAYANAN (ringkas) */}
+      {/* ======================================== */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-7 mb-8">
+        <div className="flex items-center gap-3 mb-5">
+          <Info size={28} strokeWidth={2} className="text-[#1565c0]" />
+          <h2 className="text-xl font-bold text-[#0f1e33]">Informasi Pelayanan</h2>
+        </div>
+        {/* 3 bagian: jam operasional | persyaratan | tombol */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0 md:divide-x divide-slate-200 items-center">
+          <div className="flex gap-3 md:pr-6">
+            <Clock size={28} strokeWidth={1.8} className="text-[#1565c0] flex-shrink-0" />
+            <div>
+              <h4 className="font-bold text-slate-800">Jam Operasional</h4>
+              <p className="text-slate-600">{HARI_LAYANAN}</p>
+              <p className="text-lg font-extrabold text-[#1565c0]">{JAM_LAYANAN}</p>
+            </div>
+          </div>
+          <div className="flex gap-3 md:px-6">
+            <FileText size={28} strokeWidth={1.8} className="text-[#1565c0] flex-shrink-0" />
+            <div>
+              <h4 className="font-bold text-slate-800">Persyaratan Layanan</h4>
+              <p className="text-slate-600">Cek dokumen yang diperlukan untuk setiap layanan.</p>
+            </div>
+          </div>
+          {/* Tombol ke halaman Informasi Pelayanan lengkap */}
+          <div className="md:pl-6 flex md:justify-center">
             <button
-              className="btn-lihat-semua-antrean"
-              onClick={() => navigate('/antrean')}
+              onClick={() => navigate('/informasi')}
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-[#1565c0] px-7 py-3 font-bold text-[#1565c0] hover:bg-blue-50 transition"
             >
-              Lihat Semua Antrean Saya <ArrowRight size={14} />
+              Lihat Informasi Lengkap <ArrowRight size={20} />
             </button>
-          )}
+          </div>
         </div>
       </div>
 
       {/* ======================================== */}
-      {/* BAGIAN 4: INFORMASI PELAYANAN */}
+      {/* BAGIAN 4: KAKI HALAMAN (footer) */}
       {/* ======================================== */}
-      {/* Card informasi operasional dan tombol ke halaman detail */}
-      <div className="card-info-pelayanan">
-        <div className="card-header-ambil">
-          <Info size={24} strokeWidth={2} className="card-icon" />
-          <h2>Informasi Pelayanan</h2>
-        </div>
-        <div className="info-grid">
-          {/* Info Jam Operasional */}
-          <div className="info-item">
-            <Clock size={28} strokeWidth={1.5} className="info-icon" />
-            <div>
-              <h4>Jam Operasional</h4>
-              <p>Senin – Jumat</p>
-              <p className="jam-waktu">08.00 – 15.00 WIB</p>
-            </div>
-          </div>
-
-          {/* Info Petunjuk Pelayanan */}
-          <div className="info-item">
-            <FileText size={28} strokeWidth={1.5} className="info-icon" />
-            <div>
-              <h4>Petunjuk Pelayanan</h4>
-              <p>Lihat alur dan tata cara pengambilan antrean.</p>
-            </div>
-          </div>
-
-          {/* Info Persyaratan Layanan */}
-          <div className="info-item">
-            <FileText size={28} strokeWidth={1.5} className="info-icon" />
-            <div>
-              <h4>Persyaratan Layanan</h4>
-              <p>Cek dokumen yang diperlukan untuk setiap layanan.</p>
-            </div>
-          </div>
-
-          {/* Tombol navigasi ke halaman Informasi Pelayanan */}
-          <button 
-            className="btn-info-pelayanan" 
-            onClick={() => navigate('/informasi')}
-          >
-            <ArrowRight size={16} />
-            Lihat Informasi Pelayanan
-          </button>
-        </div>
-      </div>
+      <footer className="flex flex-col sm:flex-row sm:justify-between gap-2 border-t border-slate-200 pt-5 text-sm text-slate-600">
+        <span>© {new Date().getFullYear()} {INSTANSI}. All rights reserved.</span>
+        <span>{NAMA_APLIKASI} – Pelayanan Mudah, Cepat, dan Transparan.</span>
+      </footer>
 
       {/* ======================================== */}
-      {/* BAGIAN 5: MODAL QR CODE + BARCODE */}
+      {/* BAGIAN 5: MODAL FORMULIR & TIKET */}
       {/* ======================================== */}
       {/* Muncul setelah user berhasil ambil antrean (SESUAI FLOWCHART TAHAP 1) */}
       {/* Menampilkan Nomor Antrean + QR Code yang bisa di-scan petugas */}

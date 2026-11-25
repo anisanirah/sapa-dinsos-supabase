@@ -18,7 +18,9 @@ import { useNavigate } from 'react-router-dom'
 // 3. Import api dari lib/api.js untuk melakukan request HTTP ke Supabase
 // File ini sudah dikonfigurasi dengan token autentikasi otomatis
 import api from '../lib/api'
-import { STATUS_AKTIF, labelStatus } from '../lib/antrean'
+import { STATUS_AKTIF, labelStatus, WARNA_STATUS } from '../lib/antrean'
+// Banner judul bersama
+import KepalaHalaman from '../components/KepalaHalaman'
 
 // 4. Import ikon dari library lucide-react untuk visualisasi UI
 import {
@@ -32,8 +34,6 @@ import {
   Filter,        // Ikon untuk filter
   Search,        // Ikon untuk pencarian
   ArrowRight,    // Ikon panah kanan untuk navigasi
-  RefreshCw,     // Ikon refresh/putar ulang
-  FileText,      // Ikon untuk dokumen/detail
   Loader2        // Ikon loading spinner
 } from 'lucide-react'
 
@@ -98,20 +98,6 @@ function RiwayatAntrean() {
     return new Date(tanggal).toLocaleDateString('id-ID', options)
   }
 
-  // 16. Fungsi untuk mendapatkan class CSS berdasarkan status antrean
-  // Mengembalikan class yang berbeda untuk setiap status
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'menunggu': return 'status-menunggu'
-      case 'terverifikasi': return 'status-terverifikasi'
-      case 'dipanggil': return 'status-dipanggil'
-      case 'dilayani': return 'status-dilayani'
-      case 'selesai': return 'status-selesai'
-      case 'dibatalkan': return 'status-dibatalkan'
-      default: return ''
-    }
-  }
-
   // 17. Fungsi untuk mendapatkan label status yang lebih deskriptif
   const getStatusLabel = (status) => labelStatus(status)
 
@@ -153,212 +139,178 @@ function RiwayatAntrean() {
     return riwayatAntrean.filter(item => item.status === status).length
   }
 
-  // 21. Fungsi untuk mereset filter dan pencarian
-  const resetFilter = () => {
-    setFilterStatus('semua')
-    setSearchQuery('')
-  }
+  // Daftar tombol filter status (kunci filter + label yang tampil)
+  const DAFTAR_FILTER = [
+    ['semua', 'Semua'],
+    ['berjalan', 'Berjalan'],
+    ['selesai', 'Selesai'],
+    ['dibatalkan', 'Dibatalkan'],
+  ]
 
-  // 22. Return JSX: Struktur tampilan halaman yang akan dirender ke browser
   return (
-    <div className="riwayat-page">
-      {/* --- BAGIAN 1: HEADER HALAMAN --- */}
-      {/* Header berisi judul halaman, deskripsi, dan tombol aksi */}
-      <div className="riwayat-header">
-        <div className="header-icon">
-          <FileText size={28} strokeWidth={2} />
+    <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      {/* --- BAGIAN 1: BANNER JUDUL + tombol Ambil Antrean Baru --- */}
+      <KepalaHalaman
+        ikon={Calendar}
+        judul="Riwayat Antrean"
+        deskripsi="Lihat daftar antrean yang pernah Anda buat, lengkap dengan status dan detail layanan."
+        aksi={
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-3 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] px-7 py-3.5 font-bold text-white shadow-md shadow-blue-200 transition"
+          >
+            <Ticket size={22} />
+            Ambil Antrean Baru
+          </button>
+        }
+      />
+
+      {/* --- BAGIAN 2: FILTER STATUS + PENCARIAN (satu baris) --- */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-5 mb-6">
+        <div className="flex items-center gap-2 mb-3 font-bold text-[#0f1e33]">
+          <Filter size={20} className="text-[#1565c0]" />
+          <span>Filter Status</span>
         </div>
-        <div className="header-content">
-          <h1>Riwayat Antrean</h1>
-          <p>Daftar antrean yang pernah Anda buat. Pantau status dan detail layanan di sini.</p>
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+          {/* Tombol filter berbentuk pil, lengkap dengan jumlah antrean */}
+          <div className="flex flex-wrap gap-3">
+            {DAFTAR_FILTER.map(([kunci, label]) => {
+              const aktif = filterStatus === kunci
+              return (
+                <button
+                  key={kunci}
+                  onClick={() => setFilterStatus(kunci)}
+                  className={`inline-flex items-center gap-2 rounded-full border px-5 py-2 font-semibold transition ${
+                    aktif
+                      ? 'bg-[#0d5bc4] border-[#0d5bc4] text-white'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-[#1976d2] hover:text-[#1565c0]'
+                  }`}
+                >
+                  {label}
+                  <span className={`min-w-[24px] rounded-full px-1.5 text-sm ${aktif ? 'bg-white/30' : 'bg-slate-100 text-slate-700'}`}>
+                    {getCountByStatus(kunci)}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Garis pemisah tegak (hanya di layar lebar) */}
+          <span className="hidden lg:block w-px h-12 bg-slate-200" aria-hidden="true" />
+
+          {/* Kotak pencarian nomor antrean / nama layanan */}
+          <div className="relative flex-1">
+            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Cari nomor antrean atau layanan..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-10 text-slate-800 focus:outline-none focus:border-[#1976d2] focus:ring-4 focus:ring-blue-100"
+            />
+            {/* Tombol hapus pencarian (muncul hanya jika ada isian) */}
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                title="Hapus pencarian"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500"
+              >
+                <XCircle size={18} />
+              </button>
+            )}
+          </div>
         </div>
-        {/* Tombol untuk navigasi ke halaman antrean */}
-        <button
-          className="btn-ambil-antrean"
-          onClick={() => navigate('/antrean')}
-        >
-          <Ticket size={18} />
-          Ambil Antrean Baru
-        </button>
       </div>
 
-      {/* --- BAGIAN 2: KONTEN UTAMA --- */}
-      <div className="riwayat-content">
-
-        {/* --- BAGIAN 2.1: FILTER DAN PENCARIAN --- */}
-        {/* Panel untuk memfilter berdasarkan status dan mencari antrean */}
-        <div className="filter-panel">
-          <div className="filter-section">
-            <div className="filter-label">
-              <Filter size={16} />
-              <span>Filter Status</span>
-            </div>
-            <div className="filter-buttons">
-              {/* Tombol filter untuk setiap status */}
-              <button
-                className={`filter-btn ${filterStatus === 'semua' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('semua')}
-              >
-                Semua
-                <span className="filter-count">{getCountByStatus('semua')}</span>
-              </button>
-              <button
-                className={`filter-btn ${filterStatus === 'berjalan' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('berjalan')}
-              >
-                Berjalan
-                <span className="filter-count">{getCountByStatus('berjalan')}</span>
-              </button>
-              <button
-                className={`filter-btn ${filterStatus === 'selesai' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('selesai')}
-              >
-                Selesai
-                <span className="filter-count">{getCountByStatus('selesai')}</span>
-              </button>
-              <button
-                className={`filter-btn ${filterStatus === 'dibatalkan' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('dibatalkan')}
-              >
-                Dibatalkan
-                <span className="filter-count">{getCountByStatus('dibatalkan')}</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="search-section">
-            {/* Search box untuk mencari nomor/layanan */}
-            <div className="search-box">
-              <Search size={18} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Cari nomor antrean atau layanan..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              {/* Tombol clear search (muncul hanya jika ada query) */}
-              {searchQuery && (
-                <button
-                  className="search-clear"
-                  onClick={() => setSearchQuery('')}
-                  title="Hapus pencarian"
-                >
-                  <XCircle size={16} />
-                </button>
-              )}
-            </div>
-            {/* Tombol reset filter dan pencarian */}
-            <button
-              className="btn-reset"
-              onClick={resetFilter}
-              title="Reset filter"
-            >
-              <RefreshCw size={16} />
-              Reset
-            </button>
-          </div>
+      {/* --- BAGIAN 3: DAFTAR RIWAYAT --- */}
+      {/* Tampilan berbeda untuk keadaan: memuat, gagal, kosong, dan ada data */}
+      {isLoading ? (
+        <div className="text-center py-16 text-slate-500">
+          <Loader2 className="animate-spin mx-auto mb-3 text-[#1976d2]" size={44} />
+          <p>Memuat riwayat antrean Anda...</p>
         </div>
+      ) : error ? (
+        <div className="text-center py-16">
+          <AlertCircle size={44} className="mx-auto mb-3 text-red-500" />
+          <p className="text-red-600 mb-4">{error}</p>
+          <button onClick={fetchRiwayat} className="rounded-xl bg-[#0d5bc4] px-6 py-2.5 font-semibold text-white">
+            Coba Lagi
+          </button>
+        </div>
+      ) : riwayatFiltered.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm text-center py-14 px-6">
+          <Ticket size={56} strokeWidth={1.5} className="mx-auto mb-3 text-slate-300" />
+          <h3 className="text-lg font-bold text-slate-800">Tidak Ada Riwayat</h3>
+          <p className="text-slate-500">
+            {searchQuery || filterStatus !== 'semua'
+              ? 'Tidak ada antrean yang sesuai dengan filter Anda.'
+              : 'Anda belum memiliki riwayat antrean.'}
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Info jumlah hasil */}
+          <p className="text-slate-700 mb-4">
+            Menampilkan {riwayatFiltered.length} dari {riwayatAntrean.length} riwayat antrean
+          </p>
 
-        {/* --- BAGIAN 2.2: DAFTAR RIWAYAT --- */}
-        {/* Kondisi rendering berdasarkan state loading, error, dan data */}
-        {isLoading ? (
-          // 22a. Tampilan saat data masih dimuat (Loading Spinner)
-          <div className="loading-container">
-            <Loader2 className="loading-spinner" size={48} />
-            <p>Memuat riwayat antrean Anda...</p>
-          </div>
-        ) : error ? (
-          // 22b. Tampilan jika terjadi error saat fetch data
-          <div className="error-container">
-            <AlertCircle size={48} className="error-icon" />
-            <p className="error-message">{error}</p>
-            <button onClick={fetchRiwayat} className="btn-retry">
-              Coba Lagi
-            </button>
-          </div>
-        ) : riwayatFiltered.length === 0 ? (
-          // 22c. Tampilan jika tidak ada riwayat yang sesuai filter
-          <div className="empty-state">
-            <div className="empty-icon">
-              <Ticket size={64} strokeWidth={1.5} />
-            </div>
-            <h3>Tidak Ada Riwayat</h3>
-            <p>
-              {searchQuery || filterStatus !== 'semua'
-                ? 'Tidak ada antrean yang sesuai dengan filter Anda.'
-                : 'Anda belum memiliki riwayat antrean.'}
-            </p>
-            <button
-              className="btn-ambil-antrean"
-              onClick={() => {
-                resetFilter()
-                navigate('/antrean')
-              }}
-            >
-              <Ticket size={18} />
-              Ambil Antrean Sekarang
-            </button>
-          </div>
-        ) : (
-          // 22d. Tampilan jika ada data riwayat
-          <div className="riwayat-list">
-            {/* Info jumlah hasil pencarian */}
-            <div className="result-info">
-              <span>Menampilkan {riwayatFiltered.length} dari {riwayatAntrean.length} antrean</span>
-            </div>
-
-            {/* Looping untuk menampilkan setiap item riwayat */}
+          <div className="space-y-4">
+            {/* Satu kartu untuk setiap antrean */}
             {riwayatFiltered.map((item) => (
-              <div key={item.id} className="riwayat-card">
-                {/* Bagian kiri: Nomor antrean dan detail */}
-                <div className="riwayat-main">
-                  <div className="riwayat-nomor">
-                    <Ticket size={20} />
-                    <strong>{item.nomor_antrean}</strong>
+              <div key={item.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-5 flex flex-col md:flex-row md:items-center gap-4">
+                {/* Nomor antrean dalam kotak biru muda */}
+                <div className="flex items-center justify-center gap-2 rounded-xl bg-blue-50 px-6 py-4 text-2xl font-extrabold text-[#1565c0] md:w-40">
+                  <Ticket size={24} />
+                  {item.nomor_antrean}
+                </div>
+                {/* Garis pemisah tegak */}
+                <span className="hidden md:block w-px self-stretch bg-slate-200" aria-hidden="true" />
+
+                {/* Nama layanan, tanggal, jam, dan alasan batal */}
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-lg font-bold text-[#0f1e33]">{item.layanan?.nama_layanan || '-'}</h4>
+                  <div className="flex flex-wrap gap-x-6 gap-y-1 mt-1 text-slate-600">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Calendar size={16} />
+                      {formatTanggal(item.tanggal || item.created_at)}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock size={16} />
+                      {new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
+                    </span>
                   </div>
-                  <div className="riwayat-detail">
-                    <h4>{item.layanan?.nama_layanan || '-'}</h4>
-                    <div className="riwayat-meta">
-                      <span className="meta-item">
-                        <Calendar size={14} />
-                        {formatTanggal(item.tanggal || item.created_at)}
-                      </span>
-                      <span className="meta-item">
-                        <Clock size={14} />
-                        {new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
-                      </span>
-                    </div>
-                    {/* Alasan pembatalan (misal: "Tidak hadir saat dipanggil") */}
-                    {item.status === 'dibatalkan' && item.alasan_batal && (
-                      <p className="text-xs text-red-600 mt-1">Alasan: {item.alasan_batal}</p>
-                    )}
-                  </div>
+                  {/* Alasan pembatalan (misal: "Tidak hadir saat dipanggil") */}
+                  {item.status === 'dibatalkan' && item.alasan_batal && (
+                    <p className="flex items-start gap-1.5 mt-1.5 text-red-600">
+                      <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+                      Alasan pembatalan: {item.alasan_batal}
+                    </p>
+                  )}
                 </div>
 
-                {/* Bagian kanan: Status dan aksi */}
-                <div className="riwayat-action">
-                  <div className={`status-badge ${getStatusClass(item.status)}`}>
+                {/* Status + tombol Detail (berdampingan) */}
+                <div className="flex items-center gap-4 md:ml-auto">
+                  <span className={`inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold whitespace-nowrap ${WARNA_STATUS[item.status] || 'bg-slate-100 text-slate-700'}`}>
                     {getStatusIcon(item.status)}
-                    <span>{getStatusLabel(item.status)}</span>
-                  </div>
+                    {getStatusLabel(item.status)}
+                  </span>
                   <button
-                    className="btn-detail"
                     onClick={() => navigate('/antrean')}
                     title="Lihat detail"
+                    className="inline-flex items-center gap-2 rounded-xl border-2 border-[#1565c0] px-5 py-2 font-bold text-[#1565c0] hover:bg-blue-50 transition"
                   >
                     Detail
-                    <ArrowRight size={14} />
+                    <ArrowRight size={18} />
                   </button>
                 </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   )
 }
 
-// 23. Export komponen agar bisa digunakan di file lain (App.jsx)
+
 export default RiwayatAntrean

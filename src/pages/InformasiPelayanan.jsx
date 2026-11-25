@@ -6,23 +6,27 @@
  // Mengimpor hook useState dari React untuk mengelola state atau data yang dapat berubah.
 import { useState, useEffect } from 'react'
 import api from '../lib/api'
+// Navigasi ke Dashboard saat tombol "Ambil Nomor Antrean" diklik
+import { useNavigate } from 'react-router-dom'
+// Data login: kartu ajakan ambil antrean hanya untuk pengunjung
+import { useAuth } from '../context/AuthContext'
+// Banner judul bersama
+import KepalaHalaman from '../components/KepalaHalaman'
+// Nama instansi, alamat, hari & jam pelayanan (satu sumber)
+import { INSTANSI, ALAMAT_KANTOR, HARI_LAYANAN, JAM_LAYANAN } from '../lib/merek'
 
 // Mengimpor kumpulan ikon dari library lucide-react.
 // Setiap ikon digunakan sebagai elemen visual untuk memperjelas informasi pada halaman.
 import {
-  ClipboardCheck,
-  Heart,
-  Users,
-  Shield,
-  Layers,
-  FileText,
-  ChevronDown,
-  CheckCircle2,  // ← PASTIKAN INI ADA!
-  Info,
-  Calendar,
-  Clock,
-  MapPin,
-  Ticket
+  FileText,      // Ikon dokumen persyaratan
+  ChevronDown,   // Ikon panah pada pilihan layanan
+  CheckCircle2,  // Ikon centang di setiap persyaratan
+  Info,          // Ikon petunjuk pelayanan
+  Calendar,      // Ikon hari pelayanan
+  Clock,         // Ikon jam operasional
+  MapPin,        // Ikon lokasi kantor
+  Ticket,        // Ikon tiket antrean
+  ArrowRight     // Ikon panah pada tombol
 } from 'lucide-react'
 
 // Mengimpor file CSS yang berisi pengaturan tampilan dan desain halaman Informasi Pelayanan.
@@ -37,15 +41,10 @@ function InformasiPelayanan() {
   // useState digunakan agar tampilan persyaratan dapat berubah sesuai pilihan pengguna.
   const [selectedLayanan, setSelectedLayanan] = useState('Bantuan Sosial Tunai')
 
-  // 6. Data statis untuk daftar jenis layanan (bisa nanti diambil dari API/Database)
-  // Array ini menyimpan informasi ikon, nama layanan, dan warna untuk setiap kartu layanan.
-  const jenisLayanan = [
-    { icon: Heart, title: 'Bantuan Sosial Tunai', color: 'blue' },
-    { icon: Users, title: 'Rehabilitasi Sosial', color: 'blue' },
-    { icon: Shield, title: 'Perlindungan Sosial', color: 'blue' },
-    { icon: Layers, title: 'Pemberdayaan Sosial', color: 'purple' },
-    { icon: FileText, title: 'Aktivasi BPJS/KIS', color: 'blue' }
-  ]
+  // Navigasi & peran pengguna (petugas tidak melihat ajakan ambil antrean)
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const bolehAmbilAntrean = (user?.profile?.role || 'pengunjung') === 'pengunjung'
 
   // 7. Data statis untuk persyaratan berdasarkan jenis layanan yang dipilih
   // Object ini menggunakan nama layanan sebagai key dan daftar persyaratan sebagai value.
@@ -110,187 +109,148 @@ function InformasiPelayanan() {
     { nomor: 5, title: 'Proses Pelayanan', deskripsi: 'Petugas akan memverifikasi dokumen dan memberikan layanan.' }
   ]
 
-  // 9. Return JSX: Struktur tampilan halaman yang akan dirender ke browser
-  // JSX digunakan untuk menggabungkan struktur HTML dengan ekspresi JavaScript dan komponen React.
   return (
-    <div className="informasi-page">
-      
-      {/* --- BAGIAN 1: HEADER HALAMAN --- */}
-      {/* Bagian header menampilkan judul halaman, nama instansi, dan deskripsi singkat pelayanan. */}
-      <div className="informasi-header">
-        <div className="header-content">
-          <h1>Informasi Pelayanan</h1>
-          <h2>Dinas Sosial Kabupaten Majalengka</h2>
-          <p>Temukan informasi lengkap mengenai jenis layanan, persyaratan, prosedur, dan jadwal pelayanan di Dinas Sosial.</p>
-        </div>
-        <div className="header-illustration">
-          <div className="illustration-icon">
-            {/* Menampilkan ikon ClipboardCheck dengan ukuran 80px */}
-            {/* strokeWidth mengatur ketebalan garis pada ikon. */}
-            <ClipboardCheck size={80} strokeWidth={1.5} />
-          </div>
-        </div>
-      </div>
+    <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
-      {/* --- BAGIAN 2: JENIS LAYANAN (GRID KARTU) --- */}
-      {/* Bagian ini menampilkan pilihan jenis layanan dalam bentuk kumpulan kartu. */}
-      <div className="section">
-        <div className="section-header">
-          {/* Ikon Layers digunakan sebagai penanda bagian jenis layanan. */}
-          <Layers size={24} strokeWidth={2} className="section-icon" />
-          <div>
-            <h3>Jenis Layanan</h3>
-            <p>Pilih layanan untuk melihat informasi detail, persyaratan, dan prosedur pelayanan.</p>
-          </div>
-        </div>
-        <div className="layanan-grid">
-          {/* Melakukan looping (map) pada array jenisLayanan untuk membuat kartu */}
-          {/* map() digunakan untuk membaca setiap data layanan dan menghasilkan elemen JSX. */}
-          {jenisLayanan.map((layanan, index) => (
-            // key digunakan React untuk mengidentifikasi setiap elemen dalam proses rendering daftar.
-            // Class CSS dibuat dinamis berdasarkan warna yang terdapat pada data layanan.
-            <div key={index} className={`layanan-card ${layanan.color}`}>
-              {/* Render ikon dinamis berdasarkan data */}
-              {/* Ikon ditampilkan sesuai komponen yang tersimpan pada properti icon. */}
-              <layanan.icon size={40} strokeWidth={1.5} />
-              {/* Menampilkan nama layanan berdasarkan properti title. */}
-              <h4>{layanan.title}</h4>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* --- BAGIAN 1: BANNER JUDUL --- */}
+      {/* Banner bersama: judul halaman, nama instansi, dan penjelasan singkat */}
+      <KepalaHalaman
+        judul="Informasi Pelayanan"
+        subjudul={INSTANSI}
+        deskripsi="Temukan informasi lengkap mengenai persyaratan, prosedur, dan ketentuan pelayanan di Dinas Sosial."
+      />
 
-      {/* --- BAGIAN 3: PERSYARATAN & PETUNJUK (2 KOLOM) --- */}
-      {/* Bagian ini dibagi menjadi dua kolom, yaitu persyaratan dan petunjuk pelayanan. */}
-      <div className="info-grid">
-        
+      {/* --- BAGIAN 2: PERSYARATAN & PETUNJUK (2 KOLOM) --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
         {/* Kolom Kiri: Persyaratan Pelayanan */}
-        {/* Menampilkan daftar dokumen yang harus disiapkan oleh masyarakat. */}
-        <div className="info-card">
-          <div className="card-header">
-            <FileText size={24} strokeWidth={2} className="card-icon" />
-            <h3>Persyaratan Pelayanan</h3>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-7">
+          <div className="flex items-center gap-3 pb-4 mb-5 border-b border-slate-100">
+            <FileText size={28} strokeWidth={2} className="text-[#1565c0]" />
+            <h3 className="text-xl font-bold text-[#0f1e33]">Persyaratan Pelayanan</h3>
           </div>
-          <div className="dropdown-container">
-            {/* Dropdown untuk memilih jenis layanan, saat berubah akan mengupdate state selectedLayanan */}
-            {/* value menghubungkan pilihan dropdown dengan state yang sedang aktif. */}
-            {/* onChange menangkap perubahan pilihan pengguna dan memperbarui state menggunakan setSelectedLayanan. */}
-            <select 
+
+          {/* Pilihan layanan: saat diganti, daftar persyaratan ikut berubah */}
+          <label className="block font-semibold text-slate-800 mb-2">Pilih Layanan</label>
+          <div className="relative mb-5">
+            <select
               value={selectedLayanan}
               onChange={(e) => setSelectedLayanan(e.target.value)}
-              className="layanan-dropdown"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-5 py-3.5 pr-12 font-medium text-slate-800 shadow-sm focus:outline-none focus:border-[#1976d2] focus:ring-4 focus:ring-blue-100"
             >
-              {/* Object.keys() mengambil seluruh nama layanan sebagai pilihan dropdown. */}
-              {/* map() mengubah setiap nama layanan menjadi elemen option. */}
+              {/* Object.keys() mengambil seluruh nama layanan sebagai pilihan dropdown */}
               {Object.keys(dataPersyaratan).map((layanan) => (
                 <option key={layanan} value={layanan}>{layanan}</option>
               ))}
             </select>
+            <ChevronDown size={20} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1565c0]" />
           </div>
-          <div className="persyaratan-content">
-            {/* Judul persyaratan berubah secara otomatis mengikuti layanan yang dipilih. */}
-            <h4>Persyaratan {selectedLayanan}</h4>
-            <ul className="persyaratan-list">
-              {/* Menampilkan daftar persyaratan sesuai layanan yang dipilih di dropdown */}
-              {/* Data diakses melalui key selectedLayanan pada object persyaratanData. */}
-              {(dataPersyaratan[selectedLayanan] || []).map((item, index) => (
-                <li key={index}>
-                  {/* Ikon CheckCircle2 digunakan sebagai penanda setiap persyaratan dokumen. */}
-                  <CheckCircle2 size={18} strokeWidth={2} className="check-icon" />
-                  {/* Menampilkan nama persyaratan berdasarkan data item. */}
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+
+          {/* Judul persyaratan dalam kotak biru muda */}
+          <div className="flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 mb-2">
+            <FileText size={24} className="text-[#1565c0] flex-shrink-0" />
+            <h4 className="font-bold text-[#0f1e33]">Persyaratan {selectedLayanan}</h4>
           </div>
+
+          {/* Daftar dokumen yang harus disiapkan */}
+          <ul className="divide-y divide-slate-100">
+            {(dataPersyaratan[selectedLayanan] || []).map((item, index) => (
+              <li key={index} className="flex items-start gap-3 py-3 text-slate-800">
+                <CheckCircle2 size={20} strokeWidth={2} className="text-green-600 flex-shrink-0 mt-0.5" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Kolom Kanan: Petunjuk Pelayanan */}
-        {/* Menampilkan tahapan pelayanan agar masyarakat memahami prosedur yang harus dilakukan. */}
-        <div className="info-card">
-          <div className="card-header">
-            <Info size={24} strokeWidth={2} className="card-icon" />
-            <h3>Petunjuk Pelayanan</h3>
+        {/* Kolom Kanan: Petunjuk Pelayanan (langkah bernomor dengan garis penghubung) */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-7">
+          <div className="flex items-center gap-3 pb-4 mb-5 border-b border-slate-100">
+            <Info size={28} strokeWidth={2} className="text-[#1565c0]" />
+            <h3 className="text-xl font-bold text-[#0f1e33]">Petunjuk Pelayanan</h3>
           </div>
-          <div className="petunjuk-list">
-            {/* Melakukan looping untuk menampilkan langkah-langkah pelayanan */}
-            {/* Setiap langkah ditampilkan berdasarkan data yang tersimpan dalam array petunjukPelayanan. */}
-            {petunjukPelayanan.map((item) => (
-              // item.nomor digunakan sebagai key untuk membedakan setiap langkah pelayanan.
-              <div key={item.nomor} className="petunjuk-item">
-                {/* Menampilkan nomor urut dari setiap tahapan pelayanan. */}
-                <div className="petunjuk-number">{item.nomor}</div>
-                <div className="petunjuk-content">
-                  {/* Menampilkan judul dan penjelasan dari setiap tahapan pelayanan. */}
-                  <h4>{item.title}</h4>
-                  <p>{item.deskripsi}</p>
+          <ol className="relative">
+            {petunjukPelayanan.map((item, i) => (
+              <li key={item.nomor} className="relative flex gap-4 pb-5 last:pb-0">
+                {/* Garis tegak penghubung antar nomor (tidak ada di langkah terakhir) */}
+                {i < petunjukPelayanan.length - 1 && (
+                  <span className="absolute left-[18px] top-10 bottom-0 w-0.5 bg-blue-100" aria-hidden="true" />
+                )}
+                {/* Bulatan nomor langkah */}
+                <span className="relative z-10 flex w-9 h-9 flex-shrink-0 items-center justify-center rounded-full bg-[#1976d2] font-bold text-white ring-4 ring-blue-100">
+                  {item.nomor}
+                </span>
+                <div>
+                  <h4 className="font-bold text-[#0f1e33]">{item.title}</h4>
+                  <p className="text-sm text-slate-600">{item.deskripsi}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      {/* --- BAGIAN 3: INFORMASI OPERASIONAL & AJAKAN AMBIL ANTREAN --- */}
+      <div className={`grid grid-cols-1 ${bolehAmbilAntrean ? 'lg:grid-cols-2' : ''} gap-6`}>
+
+        {/* Kartu Informasi Operasional (Hari, Jam, Lokasi) */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-7">
+          <div className="flex items-center gap-3 mb-5">
+            <Clock size={28} strokeWidth={2} className="text-[#1565c0]" />
+            <h3 className="text-xl font-bold text-[#0f1e33]">Informasi Operasional</h3>
+          </div>
+          <div className="space-y-3">
+            {[
+              [Calendar, 'Hari Pelayanan', HARI_LAYANAN],
+              [Clock, 'Jam Operasional', JAM_LAYANAN],
+              [MapPin, 'Lokasi', ALAMAT_KANTOR],
+            ].map(([Ikon, label, nilai]) => (
+              <div key={label} className="flex items-center gap-4 rounded-xl bg-slate-50 px-5 py-4">
+                <Ikon size={24} strokeWidth={2} className="text-[#1565c0] flex-shrink-0" />
+                <div>
+                  <span className="block text-sm text-slate-600">{label}</span>
+                  <span className="block font-bold text-[#0f1e33]">{nilai}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* --- BAGIAN 4: INFORMASI OPERASIONAL & CALL TO ACTION (CTA) --- */}
-      {/* Bagian bawah halaman berisi informasi jadwal operasional dan tombol pengambilan antrean. */}
-      <div className="bottom-grid">
-        
-        {/* Kartu Informasi Operasional (Hari, Jam, Lokasi) */}
-        {/* Informasi ini membantu masyarakat mengetahui waktu dan lokasi pelayanan. */}
-        <div className="info-card">
-          <div className="card-header">
-            <Clock size={24} strokeWidth={2} className="card-icon" />
-            <h3>Informasi Operasional</h3>
-          </div>
-          <div className="operasional-list">
-            {/* Informasi hari pelayanan kantor. */}
-            <div className="operasional-item">
-              <Calendar size={20} strokeWidth={2} />
-              <div>
-                <span className="label">Hari Pelayanan</span>
-                <span className="value">Senin – Jumat</span>
+        {/* Kartu ajakan (hanya untuk pengunjung, karena petugas tidak mengambil antrean) */}
+        {bolehAmbilAntrean && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d5bc4] to-[#3b8de8] p-7 sm:p-8 text-white flex items-center">
+            {/* Hiasan gelombang tipis di bagian bawah */}
+            <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-24 w-full" viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 70 C 150 20, 300 110, 600 40 L 600 100 L 0 100 Z" fill="#ffffff" opacity="0.12" />
+            </svg>
+            <div className="relative flex flex-col sm:flex-row items-center gap-6 w-full">
+              {/* Kotak ikon tiket */}
+              <div className="flex w-24 h-24 flex-shrink-0 items-center justify-center rounded-2xl bg-white/20">
+                <Ticket size={52} strokeWidth={1.6} />
               </div>
-            </div>
-            {/* Informasi jam operasional pelayanan kantor. */}
-            <div className="operasional-item">
-              <Clock size={20} strokeWidth={2} />
-              <div>
-                <span className="label">Jam Operasional</span>
-                <span className="value">08.00 – 15.00 WIB</span>
-              </div>
-            </div>
-            {/* Informasi alamat lokasi kantor Dinas Sosial Kabupaten Majalengka. */}
-            <div className="operasional-item">
-              <MapPin size={20} strokeWidth={2} />
-              <div>
-                <span className="label">Lokasi</span>
-                <span className="value">Jl. KH. Abdul Halim No. 123, Kabupaten Majalengka</span>
+              <span className="hidden sm:block w-px self-stretch bg-white/40" aria-hidden="true" />
+              <div className="text-center sm:text-left">
+                <h3 className="text-2xl font-extrabold leading-tight">Siap Mendapatkan Pelayanan?</h3>
+                <p className="mt-2 text-blue-50">
+                  Ambil nomor antrean sekarang dan dapatkan layanan dengan lebih cepat dan teratur.
+                </p>
+                {/* Tombol menuju Dashboard (tempat memilih layanan & ambil antrean) */}
+                <button
+                  onClick={() => navigate('/')}
+                  className="mt-5 inline-flex items-center gap-3 rounded-xl bg-white px-7 py-3 font-bold text-[#0d5bc4] hover:bg-blue-50 transition"
+                >
+                  <Ticket size={22} />
+                  Ambil Nomor Antrean
+                  <ArrowRight size={20} />
+                </button>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Kartu Call to Action (Tombol Ambil Antrean) */}
-        {/* Bagian CTA bertujuan mengarahkan pengguna untuk melakukan pengambilan nomor antrean. */}
-        <div className="cta-card">
-          <div className="cta-icon">
-            <Ticket size={60} strokeWidth={1.5} />
-          </div>
-          <h3>Siap Mendapatkan Pelayanan?</h3>
-          <p>Ambil nomor antrean sekarang dan dapatkan layanan dengan lebih cepat dan teratur.</p>
-          {/* Tombol ini nanti bisa diarahkan ke halaman /antrean menggunakan useNavigate */}
-          {/* Ikon Ticket memperjelas fungsi tombol, sedangkan ChevronDown menjadi elemen visual tambahan. */}
-          <button className="cta-button">
-            <Ticket size={20} strokeWidth={2} />
-            Ambil Nomor Antrean
-            <ChevronDown size={20} strokeWidth={2} />
-          </button>
-        </div>
+        )}
       </div>
     </div>
   )
 }
 
-// 10. Export komponen agar bisa di-import di file lain (misalnya di App.jsx)
-// export default memungkinkan komponen InformasiPelayanan digunakan pada file React lainnya.
+
 export default InformasiPelayanan
