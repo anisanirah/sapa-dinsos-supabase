@@ -124,7 +124,8 @@ function AppRoutes() {
       <Route path="/rekap-layanan" element={<Halaman roles={ROLE_PETUGAS}><RekapLayanan /></Halaman>} />
 
       {/* --- SEMUA ROLE YANG SUDAH LOGIN --- */}
-      <Route path="/informasi" element={<Halaman><InformasiPelayanan /></Halaman>} />
+      {/* Informasi Pelayanan: hanya pengunjung & petugas pendaftaran (petugas pelayanan tidak memerlukannya) */}
+      <Route path="/informasi" element={<Halaman roles={['pengunjung', 'petugas_pendaftaran']}><InformasiPelayanan /></Halaman>} />
       <Route path="/profil" element={<Halaman><ProfilSaya /></Halaman>} />
       <Route path="/pengaturan" element={<Halaman><PengaturanAkun /></Halaman>} />
       <Route path="/ubah-kata-sandi" element={<Halaman><UbahKataSandi /></Halaman>} />

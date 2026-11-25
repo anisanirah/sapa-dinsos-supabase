@@ -101,7 +101,9 @@ function Sidebar({ terbuka = false, onTutup = () => {} }) {
       path: '/informasi',
       label: 'Informasi Pelayanan',
       icon: FileText,
-      roles: ['pengunjung', 'petugas_pendaftaran', 'petugas_pelayanan']  // Semua role
+      // Pengunjung & petugas pendaftaran (meja depan, sering dijaga siswa PKL yang perlu
+      // mengecek persyaratan). Petugas pelayanan tidak perlu menu ini.
+      roles: ['pengunjung', 'petugas_pendaftaran']
     },
     {
       path: '/antrean',
