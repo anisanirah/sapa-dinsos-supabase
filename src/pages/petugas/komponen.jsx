@@ -66,13 +66,13 @@ const WARNA_KARTU = {
 export function StatCard({ icon, label, value, sub, color }) {
   const w = WARNA_KARTU[color] || WARNA_KARTU.blue
   return (
-    <div className={`flex items-center gap-4 rounded-2xl border p-5 shadow-sm ${w.kartu}`}>
+    <div className={`flex items-center gap-3 rounded-2xl border p-4 shadow-sm ${w.kartu}`}>
       {/* Kotak ikon bulat berwarna */}
-      <div className={`flex w-16 h-16 flex-shrink-0 items-center justify-center rounded-full ${w.ikon}`}>{icon}</div>
+      <div className={`flex w-14 h-14 flex-shrink-0 items-center justify-center rounded-full ${w.ikon}`}>{icon}</div>
       <div className="min-w-0">
-        <div className="font-semibold text-slate-700">{label}</div>
+        <div className="text-sm font-semibold text-slate-700 leading-snug">{label}</div>
         <div className="text-3xl font-extrabold text-[#0f1e33] leading-tight">{value}</div>
-        {sub && <div className="text-sm text-slate-500">{sub}</div>}
+        {sub && <div className="text-xs text-slate-500 leading-snug">{sub}</div>}
       </div>
     </div>
   )

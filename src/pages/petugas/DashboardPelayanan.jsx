@@ -209,18 +209,19 @@ export default function DashboardPelayanan() {
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto flex flex-col gap-6 lg:block lg:space-y-6">
       {/* ===== JUDUL HALAMAN + pilihan loket & suara ===== */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {/* Kotak ikon biru di samping judul */}
           <span className="flex w-12 h-12 flex-shrink-0 items-center justify-center rounded-xl bg-[#0d5bc4] text-white shadow-md shadow-blue-200">
             <LayoutGrid size={26} />
           </span>
           <div>
             <h1 className="text-2xl font-extrabold text-[#0f1e33]">Dashboard Pelayanan</h1>
-            <p className="text-slate-500 text-sm mt-0.5">Ambil antrean yang sudah terverifikasi, sistem akan memanggil lewat speaker, lalu layani sampai selesai.</p>
+            <p className="text-slate-500 text-sm mt-0.5">Ambil antrean, panggil, lalu layani sampai selesai.</p>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        {/* Tombol loket & suara selalu sejajar dalam satu baris */}
+        <div className="flex flex-nowrap items-center gap-3 flex-shrink-0">
           {/* Pilihan nomor loket komputer ini (dibacakan & tampil di layar TV) */}
           <div className="relative">
             <select
@@ -264,10 +265,10 @@ export default function DashboardPelayanan() {
       {/* ===== EMPAT KARTU STATISTIK ===== */}
       {/* Di HP statistik ditaruh setelah kartu kerja (order-last), di layar lebar tetap di atas */}
       <div className="order-last lg:order-none grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard icon={<ListOrdered size={28} />} color="blue" label="Siap Dipanggil" value={stats?.terverifikasi ?? 0} sub="Sudah terverifikasi" />
-        <StatCard icon={<Megaphone size={28} />} color="orange" label="Sedang Diproses" value={(stats?.dipanggil ?? 0) + (stats?.dilayani ?? 0)} sub="Dipanggil + dilayani" />
-        <StatCard icon={<CheckCircle2 size={28} />} color="green" label="Selesai Hari Ini" value={stats?.selesai ?? 0} sub="Semua loket" />
-        <StatCard icon={<Users size={28} />} color="red" label="Belum Verifikasi" value={stats?.menunggu ?? 0} sub="Masih di meja pendaftaran" />
+        <StatCard icon={<ListOrdered size={26} />} color="blue" label="Siap Dipanggil" value={stats?.terverifikasi ?? 0} sub="Sudah terverifikasi" />
+        <StatCard icon={<Megaphone size={26} />} color="orange" label="Sedang Diproses" value={(stats?.dipanggil ?? 0) + (stats?.dilayani ?? 0)} sub="Dipanggil + dilayani" />
+        <StatCard icon={<CheckCircle2 size={26} />} color="green" label="Selesai Hari Ini" value={stats?.selesai ?? 0} sub="Semua loket" />
+        <StatCard icon={<Users size={26} />} color="red" label="Belum Verifikasi" value={stats?.menunggu ?? 0} sub="Masih di meja pendaftaran" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
