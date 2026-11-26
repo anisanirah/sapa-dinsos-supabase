@@ -128,19 +128,37 @@ export default function DashboardPelayanan() {
     umumkanPanggilan({ nomor: a.nomor_antrean, nama: a.nama_tampil, loket })
   }
 
-  // "Ambil": TERVERIFIKASI -> DIPANGGIL, lalu langsung diumumkan
-  const ambil = async (a) => {
-    const berhasil = await aksi(a, 'call', 'Gagal mengambil antrean.')
-    if (berhasil) panggilDenganSuara(a)
+  // Kirim panggilan ke LAYAR TV ruang tunggu (halaman /layar).
+  // Jika gagal (misal internet putus), petugas cukup diberi tahu; pelayanan tetap jalan.
+  const tampilkanDiLayar = async (a) => {
+    // Nomor loket wajib dipilih agar layar tahu pengunjung harus ke loket mana
+    if (!loket) {
+      toast.error('Pilih nomor "Loket" di kanan atas agar panggilan tampil di layar TV.')
+      return false
+    }
+    try {
+      await api.put(`/antreans/${a.id}/umumkan`, { loket: Number(loket) })
+      return true
+    } catch (err) {
+      toast.error(pesanError(err, 'Panggilan belum tampil di layar TV.'))
+      return false
+    }
   }
 
-  // "Panggil Ulang": umumkan lagi tanpa mengubah status (pengunjung belum datang ke loket)
-  const panggilUlang = (a) => {
-    if (!suaraAktif) {
-      toast.error('Suara sedang mati. Nyalakan tombol "Suara" di kanan atas terlebih dahulu.')
-      return
+  // "Ambil": TERVERIFIKASI -> DIPANGGIL, lalu tampil di layar TV & diumumkan
+  const ambil = async (a) => {
+    const berhasil = await aksi(a, 'call', 'Gagal mengambil antrean.')
+    if (berhasil) {
+      tampilkanDiLayar(a)
+      panggilDenganSuara(a)
     }
+  }
+
+  // "Panggil Ulang": tampil lagi di layar TV & diumumkan ulang (status tidak berubah)
+  const panggilUlang = async (a) => {
+    const tampil = await tampilkanDiLayar(a)
     panggilDenganSuara(a)
+    if (tampil) toast.success(`Nomor ${a.nomor_antrean} dipanggil ulang.`)
   }
 
   // Simpan pilihan nomor loket di browser komputer ini

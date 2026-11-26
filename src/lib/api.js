@@ -328,6 +328,11 @@ const RUTE = [
   ['PUT',  /^\/antreans\/(\d+)\/mulai$/,        (m) => rpc('mulai_layani', { p_id: Number(m[1]) })],
   ['PUT',  /^\/antreans\/(\d+)\/selesai$/,      (m) => rpc('selesai_layani', { p_id: Number(m[1]) })],
   ['PUT',  /^\/antreans\/(\d+)\/tidak-hadir$/,  (m) => rpc('tidak_hadir', { p_id: Number(m[1]) })],
+  // Tampilkan panggilan di layar TV ruang tunggu (saat "Ambil" & "Panggil Ulang")
+  ['PUT',  /^\/antreans\/(\d+)\/umumkan$/,      (m, b) => rpc('umumkan_panggilan', { p_id: Number(m[1]), p_loket: Number(b?.loket) })],
+
+  // --- LAYAR ANTREAN (TV ruang tunggu, boleh tanpa login) ---
+  ['GET',  /^\/layar$/,                        () => rpc('layar_antrean')],
 
   // --- KEDUA PETUGAS ---
   ['GET',  /^\/antreans\/today$/,               () => rpc('antrean_hari_ini')],

@@ -31,6 +31,7 @@ Versi utama untuk laporan & sidang KP tetap versi **Laravel**.
   5. `05_rekap_layanan.sql` — kode/tag layanan, layanan DTSEN & PBI, fungsi `rekap_layanan` untuk halaman **Rekap Layanan**
   6. `06_akun_pelayanan4.sql` — *hanya untuk proyek lama*: menambah akun petugas pelayanan ke-4 (**ganti kata sandi dulu**)
   7. `07_foto_profil.sql` — fitur **foto profil**: kolom `foto_path`, bucket Storage `foto-profil` (maks 2 MB, hanya gambar), aturan keamanan (setiap akun hanya bisa mengubah fotonya sendiri), fungsi `simpan_foto_profil`
+  8. `08_layar_antrean.sql` — **layar antrean TV** (`/layar`, tanpa login): kolom `loket` & `waktu_umumkan`, fungsi `umumkan_panggilan` dan `layar_antrean` (hanya nomor & loket, tanpa nama pengunjung)
   - `template-email/` — isi email verifikasi & atur ulang kata sandi (bahasa Indonesia)
 - `vercel.json` — agar alamat seperti `/verifikasi-email` tidak "404" di Vercel
 - `.env.example` — contoh pengaturan (salin menjadi `.env`)

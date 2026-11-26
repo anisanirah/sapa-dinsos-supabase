@@ -134,5 +134,12 @@ export async function umumkanPanggilan(data) {
   ucapan.volume = 1
   const suaraId = await pilihSuaraIndonesia()
   if (suaraId) ucapan.voice = suaraId
-  synth.speak(ucapan)
+  // Tunggu sampai kalimat selesai diucapkan (dipakai layar TV agar panggilan
+  // berurutan tidak saling memotong). Batas 15 detik agar tidak macet.
+  await new Promise((selesai) => {
+    const batas = setTimeout(selesai, 15000)
+    ucapan.onend = () => { clearTimeout(batas); selesai() }
+    ucapan.onerror = () => { clearTimeout(batas); selesai() }
+    synth.speak(ucapan)
+  })
 }

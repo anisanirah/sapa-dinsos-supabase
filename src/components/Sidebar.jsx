@@ -19,7 +19,8 @@ import {
   QrCode,           // Ikon untuk Scan Barcode
   Settings,         // Ikon untuk Pengaturan Akun
   HelpCircle,       // Ikon untuk Panduan
-  BarChart3         // Ikon untuk Rekap Layanan
+  BarChart3,        // Ikon untuk Rekap Layanan
+  MonitorPlay       // Ikon untuk Layar Antrean (TV)
 } from 'lucide-react'
 
 // 3. Import hook useState dan useEffect dari React
@@ -139,6 +140,13 @@ function Sidebar({ terbuka = false, onTutup = () => {} }) {
       roles: ['petugas_pendaftaran', 'petugas_pelayanan']  // Rekap permohonan per jenis layanan
     },
     {
+      path: '/layar',
+      label: 'Layar Antrean (TV)',
+      icon: MonitorPlay,
+      roles: ['petugas_pendaftaran', 'petugas_pelayanan'],
+      tabBaru: true  // Dibuka di tab baru agar dashboard petugas tetap terbuka
+    },
+    {
       path: '/panduan',
       label: 'Panduan',
       icon: HelpCircle,
@@ -175,6 +183,9 @@ function Sidebar({ terbuka = false, onTutup = () => {} }) {
           <Link
             key={index}
             to={item.path}
+            // Menu bertanda tabBaru (Layar Antrean) dibuka di tab browser baru
+            target={item.tabBaru ? '_blank' : undefined}
+            rel={item.tabBaru ? 'noopener noreferrer' : undefined}
             // Tambahkan class 'active' jika path sedang aktif
             className={`sidebar-menu-item ${isActive(item.path) ? 'active' : ''}`}
           >

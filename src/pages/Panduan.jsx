@@ -28,7 +28,8 @@ import {
   Repeat,        // Panggil ulang
   PlayCircle,    // Mulai layani
   UserX,         // Pengunjung tidak datang
-  Info           // Ikon info pada kotak alur status
+  Info,          // Ikon info pada kotak alur status
+  MonitorPlay    // Layar antrean TV
 } from 'lucide-react'
 
 // Isi panduan untuk setiap role. Format langkah: [ikon, judul, penjelasan]
@@ -63,11 +64,12 @@ const PANDUAN = {
     langkah: [
       [ListOrdered, 'Lihat Daftar Antrean', 'Dashboard menampilkan antrean yang sudah TERVERIFIKASI (format: A001 - Nama). Daftar diperbarui otomatis setiap beberapa detik.'],
       [Megaphone, 'Ambil Antrean', 'Klik "Ambil" pada antrean paling atas. Status menjadi "Dipanggil" dan komputer mengumumkan nomor, nama, serta nomor loket lewat speaker. Satu petugas hanya memegang satu antrean.'],
-      [Repeat, 'Panggil Ulang & Nomor Loket', 'Jika pengunjung belum datang, klik "Panggil Ulang". Pastikan pilihan "Loket" di kanan atas sesuai nomor loket komputer ini dan tombol "Suara" dalam keadaan Nyala.'],
+      [Repeat, 'Panggil Ulang & Nomor Loket', 'Setiap panggilan otomatis tampil di Layar Antrean (TV ruang tunggu). Jika pengunjung belum datang, klik "Panggil Ulang". Pastikan pilihan "Loket" di kanan atas sesuai nomor loket komputer ini.'],
       [PlayCircle, 'Mulai Layani', 'Saat pengunjung tiba di loket, klik "Mulai Layani".'],
       [CheckCircle2, 'Selesai', 'Setelah pelayanan selesai, klik "Selesai". Riwayat tercatat dan Anda bisa mengambil antrean berikutnya.'],
       [UserX, 'Pengunjung Tidak Datang', 'Jika sudah dipanggil beberapa kali tetapi tidak datang, klik "Tidak Hadir" lalu ambil antrean berikutnya.'],
       [BarChart3, 'Rekap Layanan', 'Buka menu "Rekap Layanan" untuk melihat jumlah permohonan per jenis layanan (tag), hari ini atau per bulan. Klik "Unduh PDF" untuk laporan resmi berkop surat (misalnya pilih "Bulan Ini" di akhir bulan).'],
+      [MonitorPlay, 'Layar Antrean (TV)', 'Di TV/komputer ruang tunggu, buka alamat sapa-dinsos.vercel.app/layar (tanpa login), lalu klik "Mulai dengan Suara". Layar menampilkan nomor yang dipanggil dan loket tujuan secara otomatis.'],
     ],
   },
 }

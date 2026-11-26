@@ -40,6 +40,8 @@ import Notifikasi from './pages/Notifikasi'
 import Panduan from './pages/Panduan'
 import ScanQR from './pages/ScanQR'
 // Rekap jumlah permohonan per jenis layanan (permintaan Dinsos)
+// Halaman layar antrean (TV ruang tunggu)
+import LayarAntrean from './pages/LayarAntrean'
 import RekapLayanan from './pages/RekapLayanan'
 
 // Daftar role petugas
@@ -109,6 +111,8 @@ function AppRoutes() {
       {/* Reset & verifikasi boleh dibuka dalam keadaan login maupun tidak (dibuka dari email) */}
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verifikasi-email" element={<VerifikasiEmail />} />
+      {/* Layar antrean untuk TV ruang tunggu: tanpa login, tanpa menu samping */}
+      <Route path="/layar" element={<LayarAntrean />} />
 
       {/* --- PENGUNJUNG --- */}
       <Route path="/" element={<Halaman roles={['pengunjung']}><DashboardPengunjung /></Halaman>} />
