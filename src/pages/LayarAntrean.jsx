@@ -12,7 +12,7 @@
 // Hook React
 import { useCallback, useEffect, useRef, useState } from 'react'
 // Ikon
-import { Volume2, VolumeX, Maximize, Minimize, Users, CheckCircle2, WifiOff, MonitorPlay } from 'lucide-react'
+import { Volume2, VolumeX, Maximize, Minimize, Users, CheckCircle2, WifiOff, MonitorPlay, Info } from 'lucide-react'
 // Penghubung ke Supabase
 import api from '../lib/api'
 // Suara panggilan (ding-dong + kalimat bahasa Indonesia)
@@ -334,32 +334,54 @@ export default function LayarAntrean() {
       {/* ===== LAYAR PEMBUKA: wajib satu klik agar suara boleh berbunyi ===== */}
       {perluKlik && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0b2f66]/90 backdrop-blur-sm p-6">
-          <div className="max-w-lg w-full rounded-3xl bg-white p-8 text-center shadow-2xl">
-            <MonitorPlay size={56} className="mx-auto text-[#0d5bc4]" />
-            <h2 className="mt-4 text-2xl font-extrabold">Layar Antrean {NAMA_APLIKASI}</h2>
-            <p className="mt-2 text-slate-600">
-              Pilih salah satu tombol untuk memulai. Layar akan menjadi penuh dan diperbarui otomatis.
+          <div className="relative max-w-lg w-full overflow-hidden rounded-[2rem] bg-white px-8 pt-8 pb-12 text-center shadow-2xl">
+            {/* Hiasan gelombang biru muda di bagian bawah kotak */}
+            <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-14 w-full" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 40 C 150 10, 300 55, 450 25 C 520 12, 570 18, 600 10 L 600 60 L 0 60 Z" fill="#dbeafe" />
+              <path d="M0 50 C 200 30, 350 60, 600 35 L 600 60 L 0 60 Z" fill="#bfdbfe" opacity="0.6" />
+            </svg>
+
+            {/* Kotak ikon layar */}
+            <div className="mx-auto flex w-20 h-20 items-center justify-center rounded-2xl bg-blue-100 text-[#0d5bc4]">
+              <MonitorPlay size={44} strokeWidth={1.8} />
+            </div>
+            <h2 className="mt-5 text-3xl font-extrabold leading-tight text-[#0f1e33]">
+              Layar Antrean<br />{NAMA_APLIKASI}
+            </h2>
+            {/* Garis hiasan: tipis abu-abu dengan bagian tengah biru */}
+            <div className="mx-auto mt-4 flex w-40 items-center" aria-hidden="true">
+              <span className="h-1 flex-1 rounded-l-full bg-slate-200" />
+              <span className="h-1 w-12 rounded-full bg-[#0d5bc4]" />
+              <span className="h-1 flex-1 rounded-r-full bg-slate-200" />
+            </div>
+            <p className="mt-4 text-slate-600">
+              Pilih salah satu mode untuk memulai penayangan antrean di layar layanan.
             </p>
+
             <div className="mt-6 flex flex-col gap-3">
               <button
                 onClick={() => mulai(true)}
                 autoFocus
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] px-6 py-4 text-lg font-bold text-white"
+                className="inline-flex items-center justify-center gap-3 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] px-6 py-4 text-lg font-bold text-white shadow-md shadow-blue-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
               >
-                <Volume2 size={22} />
+                <Volume2 size={24} />
                 Mulai dengan Suara
               </button>
               <button
                 onClick={() => mulai(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-3 rounded-xl border-2 border-[#1976d2] bg-white px-6 py-3.5 text-lg font-semibold text-slate-700 hover:bg-blue-50"
               >
-                <VolumeX size={20} />
+                <VolumeX size={22} />
                 Mulai tanpa Suara
               </button>
             </div>
-            <p className="mt-4 text-xs text-slate-500">
-              Browser mewajibkan satu kali klik sebelum suara boleh berbunyi.
-            </p>
+
+            {/* Kotak info alasan harus klik dulu */}
+            <div className="relative mt-5 flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 text-left text-sm text-slate-600">
+              <Info size={22} className="flex-shrink-0 text-[#0d5bc4]" />
+              <span className="w-px self-stretch bg-[#0d5bc4]/40" aria-hidden="true" />
+              <span>Browser memerlukan satu kali klik sebelum suara dapat diputar.</span>
+            </div>
           </div>
         </div>
       )}

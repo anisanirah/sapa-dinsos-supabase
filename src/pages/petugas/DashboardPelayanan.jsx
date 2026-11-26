@@ -14,7 +14,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import {
   // Ikon-ikon dari lucide-react
-  Megaphone, Play, CheckCircle2, UserX, Hand, ListOrdered, Loader2, Volume2, VolumeX, Users, Repeat, AlertTriangle,
+  Megaphone, Play, CheckCircle2, UserX, ListOrdered, Loader2, Volume2, VolumeX, Users, Repeat, AlertTriangle,
+  LayoutGrid, ChevronDown, Phone, ClipboardList,
 } from 'lucide-react'
 // Klien API (penerjemah ke Supabase, lihat lib/api.js)
 import api from '../../lib/api'
@@ -207,38 +208,46 @@ export default function DashboardPelayanan() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto flex flex-col gap-6 lg:block lg:space-y-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard Pelayanan</h1>
-          <p className="text-gray-500 text-sm mt-1">Ambil antrean yang sudah terverifikasi, sistem akan memanggil lewat speaker, lalu layani sampai selesai.</p>
+      {/* ===== JUDUL HALAMAN + pilihan loket & suara ===== */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          {/* Kotak ikon biru di samping judul */}
+          <span className="flex w-12 h-12 flex-shrink-0 items-center justify-center rounded-xl bg-[#0d5bc4] text-white shadow-md shadow-blue-200">
+            <LayoutGrid size={26} />
+          </span>
+          <div>
+            <h1 className="text-2xl font-extrabold text-[#0f1e33]">Dashboard Pelayanan</h1>
+            <p className="text-slate-500 text-sm mt-0.5">Ambil antrean yang sudah terverifikasi, sistem akan memanggil lewat speaker, lalu layani sampai selesai.</p>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {/* Pilihan nomor loket komputer ini (dibacakan saat memanggil) */}
-          <label className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 bg-white">
-            Loket
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Pilihan nomor loket komputer ini (dibacakan & tampil di layar TV) */}
+          <div className="relative">
             <select
               value={loket}
               onChange={(e) => ubahLoket(e.target.value)}
-              className="bg-transparent font-semibold text-[#1976d2] focus:outline-none"
+              aria-label="Nomor loket"
+              className="appearance-none rounded-xl border border-slate-200 bg-white pl-5 pr-11 py-2.5 font-semibold text-slate-800 shadow-sm focus:outline-none focus:border-[#1976d2] focus:ring-4 focus:ring-blue-100"
             >
-              <option value="">-</option>
-              {[1, 2, 3, 4].map((n) => <option key={n} value={String(n)}>{n}</option>)}
+              <option value="">Pilih Loket</option>
+              {[1, 2, 3, 4].map((n) => <option key={n} value={String(n)}>Loket {n}</option>)}
             </select>
-          </label>
+            <ChevronDown size={18} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-600" />
+          </div>
           {/* Nyalakan/matikan suara (bunyi antrean baru + pengumuman panggilan) */}
           <button
             onClick={ubahSuara}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm hover:bg-gray-50 ${suaraAktif ? 'border-[#1976d2] text-[#1976d2] bg-blue-50' : 'border-gray-300 text-gray-600'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 font-semibold transition ${suaraAktif ? 'border-[#1976d2] text-[#1565c0] bg-blue-50/60 hover:bg-blue-50' : 'border-slate-300 text-slate-600 bg-white hover:bg-slate-50'}`}
             title="Suara panggilan & bunyi antrean baru"
           >
-            {suaraAktif ? <Volume2 size={16} /> : <VolumeX size={16} />} Suara {suaraAktif ? 'Nyala' : 'Mati'}
+            {suaraAktif ? <Volume2 size={20} /> : <VolumeX size={20} />} Suara {suaraAktif ? 'Nyala' : 'Mati'}
           </button>
         </div>
       </div>
 
       {/* Peringatan jika komputer belum punya suara bahasa Indonesia */}
       {suaraAktif && !suaraIndonesia && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-3 text-sm text-amber-800">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-3 text-sm text-amber-800">
           <AlertTriangle size={18} className="shrink-0 mt-0.5" />
           <span>
             Browser di komputer ini belum memiliki suara berbahasa Indonesia, jadi pengumuman bisa terdengar berlogat asing.
@@ -249,137 +258,159 @@ export default function DashboardPelayanan() {
 
       <PesanGagal pesan={errorMessage} onCobaLagi={fetchData} />
 
+      {/* ===== BANNER SAPAAN + JAM ===== */}
       <BannerSapaan nama={user?.profile?.nama || 'Petugas'} subjudul="Daftar antrean diperbarui otomatis setiap 5 detik." />
 
-      {/* Empat kartu statistik */}
+      {/* ===== EMPAT KARTU STATISTIK ===== */}
       {/* Di HP statistik ditaruh setelah kartu kerja (order-last), di layar lebar tetap di atas */}
-      <div className="stats-grid order-last lg:order-none">
-        <StatCard icon={<ListOrdered size={24} />} color="blue" label="Siap Dipanggil" value={stats?.terverifikasi ?? 0} sub="Sudah terverifikasi" />
-        <StatCard icon={<Megaphone size={24} />} color="orange" label="Sedang Diproses" value={(stats?.dipanggil ?? 0) + (stats?.dilayani ?? 0)} sub="Dipanggil + dilayani" />
-        <StatCard icon={<CheckCircle2 size={24} />} color="green" label="Selesai Hari Ini" value={stats?.selesai ?? 0} sub="Semua loket" />
-        <StatCard icon={<Users size={24} />} color="red" label="Belum Verifikasi" value={stats?.menunggu ?? 0} sub="Masih di meja pendaftaran" />
+      <div className="order-last lg:order-none grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <StatCard icon={<ListOrdered size={28} />} color="blue" label="Siap Dipanggil" value={stats?.terverifikasi ?? 0} sub="Sudah terverifikasi" />
+        <StatCard icon={<Megaphone size={28} />} color="orange" label="Sedang Diproses" value={(stats?.dipanggil ?? 0) + (stats?.dilayani ?? 0)} sub="Dipanggil + dilayani" />
+        <StatCard icon={<CheckCircle2 size={28} />} color="green" label="Selesai Hari Ini" value={stats?.selesai ?? 0} sub="Semua loket" />
+        <StatCard icon={<Users size={28} />} color="red" label="Belum Verifikasi" value={stats?.menunggu ?? 0} sub="Masih di meja pendaftaran" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* --- KIRI: ANTREAN YANG SEDANG SAYA TANGANI --- */}
+        {/* ===== KIRI: ANTREAN YANG SEDANG SAYA TANGANI ===== */}
         <div className="lg:col-span-2">
-          <div className={`rounded-2xl p-6 shadow-sm border-2 ${milikSaya ? (milikSaya.status === 'dipanggil' ? 'border-yellow-400 bg-yellow-50' : 'border-purple-400 bg-purple-50') : 'border-dashed border-gray-300 bg-white'}`}>
-            <h3 className="font-bold text-gray-800 flex items-center gap-2">
-              <Megaphone size={20} className="text-[#1976d2]" /> Antrean Saya
-            </h3>
+          <div className={`rounded-2xl overflow-hidden shadow-sm border-2 bg-white ${milikSaya ? 'border-blue-200' : 'border-dashed border-slate-300'}`}>
+            {/* Kepala kartu biru muda + label loket */}
+            <div className="flex items-center gap-3 px-6 py-4 bg-blue-50/70 border-b border-blue-100">
+              <Megaphone size={26} className="text-[#1565c0]" />
+              <h3 className="flex-1 text-xl font-bold text-[#0f1e33]">Antrean Saya</h3>
+              {loket && (
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-[#1565c0]">Loket {loket}</span>
+              )}
+            </div>
 
-            {milikSaya ? (
-              <div className="mt-4">
-                <div className="text-center">
-                  <BadgeStatus status={milikSaya.status} />
-                  <div className="text-6xl font-extrabold text-[#1976d2] mt-3">{milikSaya.nomor_antrean}</div>
-                  <div className="text-xl font-semibold text-gray-800 mt-1">{milikSaya.nama_tampil}</div>
-                  <div className="text-sm text-gray-600">{alamatSingkat(milikSaya)}</div>
-                  <div className="text-sm text-gray-600">{milikSaya.layanan?.nama_layanan}</div>
-                  {milikSaya.no_telp_pengunjung && <div className="text-xs text-gray-500">HP: {milikSaya.no_telp_pengunjung}</div>}
-                </div>
-                {/* Keperluan yang ditulis pengunjung, agar petugas langsung tahu kebutuhannya */}
-                {milikSaya.keperluan && (
-                  <div className="mt-3 bg-white border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
-                    <span className="font-semibold">Keperluan:</span> {milikSaya.keperluan}
+            <div className="p-6">
+              {milikSaya ? (
+                <>
+                  <div className="text-center">
+                    {/* Label status di baris sendiri, di atas nomor */}
+                    <div><BadgeStatus status={milikSaya.status} /></div>
+                    {/* Nomor antrean dalam kotak biru muda */}
+                    <div className="mx-auto mt-3 inline-block rounded-2xl bg-blue-100/70 px-8 py-2 text-6xl font-extrabold text-[#0d47a1] tracking-tight">
+                      {milikSaya.nomor_antrean}
+                    </div>
+                    <div className="text-2xl font-bold text-[#0f1e33] mt-2">{milikSaya.nama_tampil}</div>
+                    <div className="text-slate-600">{alamatSingkat(milikSaya)}</div>
+                    <div className="text-slate-600">{milikSaya.layanan?.nama_layanan}</div>
+                    {milikSaya.no_telp_pengunjung && (
+                      <div className="mt-1 inline-flex items-center gap-1.5 text-slate-700">
+                        <Phone size={16} /> {milikSaya.no_telp_pengunjung}
+                      </div>
+                    )}
                   </div>
-                )}
-
-                {/* Status DIPANGGIL: tampilkan teks panggilan + tombol Tidak Hadir / Mulai Layani */}
-                {milikSaya.status === 'dipanggil' && (
-                  <>
-                    <div className="mt-4 bg-white border border-yellow-200 rounded-lg p-3 text-sm text-gray-700">
-                      <Hand size={16} className="inline mr-1 text-yellow-600" />
-                      {suaraAktif ? 'Diumumkan lewat speaker: ' : 'Panggil secara lisan: '}
-                      <em>&quot;Nomor antrean <strong>{milikSaya.nomor_antrean}</strong>, atas nama <strong>{milikSaya.nama_tampil}</strong>,
-                      silakan menuju loket {loket || 'pelayanan'}.&quot;</em>
-                      <div className="text-xs text-gray-500 mt-1">Dipanggil pukul {formatJam(milikSaya.waktu_dipanggil)}</div>
+                  {/* Keperluan yang ditulis pengunjung, agar petugas langsung tahu kebutuhannya */}
+                  {milikSaya.keperluan && (
+                    <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-700">
+                      <span className="font-semibold">Keperluan:</span> {milikSaya.keperluan}
                     </div>
-                    {/* Ulangi pengumuman jika pengunjung belum datang ke loket */}
-                    <button
-                      onClick={() => panggilUlang(milikSaya)}
-                      className="w-full mt-3 py-3 rounded-lg border-2 border-[#1976d2] text-[#1976d2] font-semibold hover:bg-blue-50 inline-flex items-center justify-center gap-2"
-                    >
-                      <Repeat size={18} /> Panggil Ulang
-                    </button>
-                    <div className="grid grid-cols-2 gap-2 mt-4">
-                      <button
-                        onClick={() => tidakHadir(milikSaya)}
-                        disabled={sedangKlik === milikSaya.id}
-                        className="py-3 rounded-lg border-2 border-red-300 text-red-600 font-semibold hover:bg-red-50 inline-flex items-center justify-center gap-2 disabled:opacity-50"
-                      >
-                        <UserX size={18} /> Tidak Hadir
-                      </button>
-                      <button
-                        onClick={() => mulai(milikSaya)}
-                        disabled={sedangKlik === milikSaya.id}
-                        className="py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold inline-flex items-center justify-center gap-2 disabled:opacity-50"
-                      >
-                        {sedangKlik === milikSaya.id ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} />} Mulai Layani
-                      </button>
-                    </div>
-                  </>
-                )}
+                  )}
 
-                {/* Status DILAYANI: tampilkan tombol Selesai */}
-                {milikSaya.status === 'dilayani' && (
-                  <>
-                    <p className="text-center text-sm text-gray-600 mt-4">
-                      Dilayani sejak pukul {formatJam(milikSaya.waktu_mulai_dilayani)}.
-                    </p>
+                  {/* Status DIPANGGIL: teks panggilan + Panggil Ulang + Tidak Hadir / Mulai Layani */}
+                  {milikSaya.status === 'dipanggil' && (
+                    <>
+                      <div className="mt-4 flex gap-3 bg-blue-50/70 border border-blue-100 rounded-xl p-3 text-sm text-slate-700">
+                        <Volume2 size={22} className="text-[#1565c0] flex-shrink-0" />
+                        <div>
+                          {suaraAktif ? 'Diumumkan lewat speaker: ' : 'Panggil secara lisan: '}
+                          <em>&quot;Nomor antrean <strong>{milikSaya.nomor_antrean}</strong>, atas nama <strong>{milikSaya.nama_tampil}</strong>,
+                          silakan menuju loket {loket || 'pelayanan'}.&quot;</em>
+                          <div className="text-xs text-slate-500 mt-1">Dipanggil pukul {formatJam(milikSaya.waktu_dipanggil)}</div>
+                        </div>
+                      </div>
+                      {/* Ulangi pengumuman jika pengunjung belum datang ke loket */}
+                      <button
+                        onClick={() => panggilUlang(milikSaya)}
+                        className="w-full mt-4 py-3 rounded-xl border-2 border-[#1976d2] bg-blue-50/50 text-[#1565c0] font-bold hover:bg-blue-50 inline-flex items-center justify-center gap-2"
+                      >
+                        <Repeat size={20} /> Panggil Ulang
+                      </button>
+                      <div className="grid grid-cols-2 gap-3 mt-3">
+                        <button
+                          onClick={() => tidakHadir(milikSaya)}
+                          disabled={sedangKlik === milikSaya.id}
+                          className="py-3 rounded-xl border-2 border-red-300 text-red-600 font-bold hover:bg-red-50 inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                          <UserX size={20} /> Tidak Hadir
+                        </button>
+                        <button
+                          onClick={() => mulai(milikSaya)}
+                          disabled={sedangKlik === milikSaya.id}
+                          className="py-3 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] text-white font-bold shadow-md shadow-blue-200 inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                          {sedangKlik === milikSaya.id ? <Loader2 size={20} className="animate-spin" /> : <Play size={20} />} Mulai Layani
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Status DILAYANI: tombol Selesai */}
+                  {milikSaya.status === 'dilayani' && (
+                    <>
+                      <p className="text-center text-sm text-slate-600 mt-4">
+                        Dilayani sejak pukul {formatJam(milikSaya.waktu_mulai_dilayani)}.
+                      </p>
+                      <button
+                        onClick={() => selesai(milikSaya)}
+                        disabled={sedangKlik === milikSaya.id}
+                        className="w-full mt-4 py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg shadow-md shadow-green-200 inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {sedangKlik === milikSaya.id ? <Loader2 size={20} className="animate-spin" /> : <CheckCircle2 size={20} />} Selesai
+                      </button>
+                    </>
+                  )}
+                </>
+              ) : (
+                // Belum memegang antrean
+                <div className="text-center py-6">
+                  <Megaphone size={52} strokeWidth={1.5} className="mx-auto text-blue-200" />
+                  <p className="text-slate-600 mt-3">Anda sedang tidak menangani antrean.</p>
+                  {daftar.length > 0 ? (
                     <button
-                      onClick={() => selesai(milikSaya)}
-                      disabled={sedangKlik === milikSaya.id}
-                      className="w-full mt-4 py-3.5 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-lg inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                      onClick={() => ambil(daftar[0])}
+                      disabled={sedangKlik !== null}
+                      className="mt-4 px-6 py-3 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] text-white font-bold shadow-md shadow-blue-200 inline-flex items-center gap-2 disabled:opacity-50"
                     >
-                      {sedangKlik === milikSaya.id ? <Loader2 size={20} className="animate-spin" /> : <CheckCircle2 size={20} />} Selesai
+                      <Megaphone size={20} /> Ambil Berikutnya ({daftar[0].nomor_antrean})
                     </button>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <Megaphone size={48} className="mx-auto text-gray-300" />
-                <p className="text-gray-600 mt-3">Anda sedang tidak menangani antrean.</p>
-                {daftar.length > 0 ? (
-                  <button
-                    onClick={() => ambil(daftar[0])}
-                    disabled={sedangKlik !== null}
-                    className="mt-4 px-5 py-3 rounded-lg bg-[#1976d2] hover:bg-[#1565c0] text-white font-semibold inline-flex items-center gap-2 disabled:opacity-50"
-                  >
-                    <Megaphone size={18} /> Ambil Berikutnya ({daftar[0].nomor_antrean})
-                  </button>
-                ) : (
-                  <p className="text-sm text-gray-400 mt-1">Belum ada antrean terverifikasi.</p>
-                )}
-              </div>
-            )}
+                  ) : (
+                    <p className="text-sm text-slate-400 mt-1">Belum ada antrean terverifikasi.</p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* --- KANAN: DAFTAR ANTREAN TERVERIFIKASI --- */}
-        <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-200 shadow-sm">
-          <div className="p-5 border-b border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800">Antrean Siap Dipanggil ({daftar.length})</h3>
-            <p className="text-sm text-gray-500">Urut dari yang paling dulu diverifikasi.</p>
+        {/* ===== KANAN: DAFTAR ANTREAN TERVERIFIKASI ===== */}
+        <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+          <div className="flex items-start gap-3 px-6 py-5 border-b border-slate-100">
+            <ListOrdered size={26} className="text-[#1565c0] mt-0.5" />
+            <div>
+              <h3 className="text-xl font-bold text-[#0f1e33]">Antrean Siap Dipanggil ({daftar.length})</h3>
+              <p className="text-slate-500">Urut dari yang paling dulu diverifikasi.</p>
+            </div>
           </div>
           {daftar.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <ListOrdered size={44} className="mx-auto mb-2 opacity-30" />
-              <p>Belum ada antrean terverifikasi.</p>
-              <p className="text-xs text-gray-400 mt-1">Antrean muncul otomatis setelah barcode di-scan petugas pendaftaran.</p>
+            <div className="text-center py-16 px-6">
+              <ClipboardList size={72} strokeWidth={1.3} className="mx-auto text-blue-200" />
+              <p className="mt-4 text-lg font-bold text-[#0f1e33]">Belum ada antrean terverifikasi.</p>
+              <p className="text-slate-500 mt-1">Antrean muncul otomatis setelah barcode di-scan petugas pendaftaran.</p>
             </div>
           ) : (
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-slate-100">
               {/* Satu baris untuk setiap antrean terverifikasi (baris pertama diberi warna) */}
               {daftar.map((a, i) => (
-                <li key={a.id} className={`px-5 py-4 flex items-center gap-4 ${i === 0 ? 'bg-blue-50/50' : ''}`}>
+                <li key={a.id} className={`px-6 py-4 flex items-center gap-4 ${i === 0 ? 'bg-blue-50/50' : ''}`}>
                   <div className="flex-1 min-w-0">
                     {/* Format sesuai alur: A001 - Siti Nurhaliza */}
-                    <div className="font-semibold text-gray-800 truncate">
-                      <span className="text-[#1976d2] font-bold">{a.nomor_antrean}</span> - {a.nama_tampil}
+                    <div className="font-semibold text-slate-800 truncate">
+                      <span className="text-[#1565c0] font-extrabold">{a.nomor_antrean}</span> - {a.nama_tampil}
                     </div>
-                    <div className="text-xs text-gray-500 mt-0.5 flex flex-wrap items-center gap-2">
+                    <div className="text-xs text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
                       <span>{a.layanan?.nama_layanan}</span>
                       {a.desa_kelurahan && <span>• {alamatSingkat(a)}</span>}
                       <BadgeJenis jenis={a.jenis_pendaftaran} />
@@ -390,7 +421,7 @@ export default function DashboardPelayanan() {
                     onClick={() => ambil(a)}
                     disabled={!!milikSaya || sedangKlik !== null}
                     title={milikSaya ? 'Selesaikan dulu antrean Anda' : 'Ambil antrean ini'}
-                    className="px-4 py-2 rounded-lg bg-[#1976d2] hover:bg-[#1565c0] text-white font-semibold text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-5 py-2 rounded-xl bg-[#0d5bc4] hover:bg-[#0b4fa9] text-white font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {sedangKlik === a.id ? <Loader2 size={16} className="animate-spin" /> : 'Ambil'}
                   </button>
@@ -401,19 +432,19 @@ export default function DashboardPelayanan() {
         </div>
       </div>
 
-      {/* --- ANTREAN YANG SEDANG DITANGANI PETUGAS LAIN --- */}
+      {/* ===== ANTREAN YANG SEDANG DITANGANI PETUGAS LAIN ===== */}
       {petugasLain.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-          <h3 className="font-bold text-gray-800 mb-3">Sedang Ditangani Petugas Lain</h3>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+          <h3 className="text-lg font-bold text-[#0f1e33] mb-3">Sedang Ditangani Petugas Lain</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {petugasLain.map((a) => (
-              <div key={a.id} className="border border-gray-200 rounded-xl p-3">
+              <div key={a.id} className="border border-slate-200 rounded-xl p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-[#1976d2]">{a.nomor_antrean}</span>
+                  <span className="text-xl font-extrabold text-[#1565c0]">{a.nomor_antrean}</span>
                   <BadgeStatus status={a.status} />
                 </div>
-                <div className="text-sm text-gray-800 truncate">{a.nama_tampil}</div>
-                <div className="text-xs text-gray-500">oleh {a.dilayani_oleh?.profile?.nama || '-'}</div>
+                <div className="text-sm text-slate-800 truncate">{a.nama_tampil}</div>
+                <div className="text-xs text-slate-500">oleh {a.dilayani_oleh?.profile?.nama || '-'}</div>
               </div>
             ))}
           </div>

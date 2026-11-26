@@ -5,7 +5,7 @@
 // useEffect = jalankan kode berkala; useRef = simpan nilai tanpa render ulang; useState = simpan data
 import { useEffect, useRef, useState } from 'react'
 // Ikon tangan melambai
-import { Hand } from 'lucide-react'
+import { Hand, CalendarDays, Clock } from 'lucide-react'
 // Warna & label status antrean
 import { WARNA_STATUS, labelStatus } from '../../lib/antrean'
 
@@ -23,39 +23,61 @@ export function BannerSapaan({ nama, subjudul }) {
   const sapaan = jam < 11 ? 'Selamat Pagi' : jam < 15 ? 'Selamat Siang' : jam < 18 ? 'Selamat Sore' : 'Selamat Malam'
 
   return (
-    <div className="welcome-banner">
-      <div className="banner-left">
-        <div className="banner-date">
-          {waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+    // Banner biru bergradasi dengan hiasan gelombang di bagian bawah
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0d5bc4] to-[#3d8fe6] text-white shadow-md">
+      <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-16 w-full" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 45 C 150 10, 300 60, 450 30 C 520 15, 570 25, 600 20 L 600 60 L 0 60 Z" fill="#ffffff" opacity="0.10" />
+      </svg>
+      <div className="relative flex flex-col sm:flex-row sm:items-center gap-4 px-6 sm:px-8 py-6">
+        {/* Kiri: tanggal, sapaan, keterangan */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-sm text-blue-50">
+            <CalendarDays size={18} />
+            {waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
+          <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold flex items-center gap-2 flex-wrap">
+            {sapaan}, {nama} <Hand size={30} />
+          </h2>
+          <p className="mt-1 text-blue-50">{subjudul}</p>
         </div>
-        <h2 className="banner-greeting">
-          {sapaan}, {nama} <Hand size={28} className="wave-emoji" />
-        </h2>
-        <p className="banner-subtitle">{subjudul}</p>
-      </div>
-      <div className="banner-right">
-        <div className="banner-time">{waktu.toLocaleTimeString('id-ID', { hour12: false })}</div>
-        <div className="banner-timezone">WIB</div>
+        {/* Garis pemisah tegak */}
+        <span className="hidden sm:block w-px self-stretch bg-white/40" aria-hidden="true" />
+        {/* Kanan: jam berjalan */}
+        <div className="sm:pl-6 text-left sm:text-right">
+          <div className="flex items-center sm:justify-end gap-3">
+            <Clock size={34} strokeWidth={2} />
+            <span className="text-4xl sm:text-5xl font-extrabold tabular-nums">{waktu.toLocaleTimeString('id-ID', { hour12: false })}</span>
+          </div>
+          <div className="text-sm text-blue-50 mt-1">WIB</div>
+        </div>
       </div>
     </div>
   )
 }
 
-// Kartu angka statistik
+// Warna kartu statistik: latar kartu, bingkai, dan kotak ikon
+const WARNA_KARTU = {
+  blue: { kartu: 'bg-white border-blue-100', ikon: 'bg-blue-50 text-blue-600' },
+  orange: { kartu: 'bg-amber-50/60 border-amber-100', ikon: 'bg-amber-100 text-amber-600' },
+  green: { kartu: 'bg-green-50/60 border-green-100', ikon: 'bg-green-100 text-green-600' },
+  red: { kartu: 'bg-rose-50/60 border-rose-100', ikon: 'bg-rose-100 text-rose-500' },
+}
+
 export function StatCard({ icon, label, value, sub, color }) {
+  const w = WARNA_KARTU[color] || WARNA_KARTU.blue
   return (
-    <div className="stat-card">
-      <div className={`stat-icon ${color}`}>{icon}</div>
-      <div className="stat-info">
-        <div className="stat-label">{label}</div>
-        <div className="stat-value">{value}</div>
-        {sub && <div className="stat-sub">{sub}</div>}
+    <div className={`flex items-center gap-4 rounded-2xl border p-5 shadow-sm ${w.kartu}`}>
+      {/* Kotak ikon bulat berwarna */}
+      <div className={`flex w-16 h-16 flex-shrink-0 items-center justify-center rounded-full ${w.ikon}`}>{icon}</div>
+      <div className="min-w-0">
+        <div className="font-semibold text-slate-700">{label}</div>
+        <div className="text-3xl font-extrabold text-[#0f1e33] leading-tight">{value}</div>
+        {sub && <div className="text-sm text-slate-500">{sub}</div>}
       </div>
     </div>
   )
 }
 
-// Badge status berwarna
 export function BadgeStatus({ status }) {
   return (
     <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${WARNA_STATUS[status] || 'bg-gray-100 text-gray-700'}`}>
